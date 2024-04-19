@@ -1,6 +1,6 @@
 <!-- markdownlint-disable MD033 MD041 -->
 <p align="center">
-  <a href="https://github.com/WwwwwyDev/crawlipt"><img src="https://s2.loli.net/2024/04/19/1T7sZdrjbEfci8W.png" alt="crawlist" style="width:275px; height:190px" ></a>
+  <a href="https://github.com/WwwwwyDev/crawlipt"><img src="https://s2.loli.net/2024/04/19/1T7sZdrjbEfci8W.png" alt="crawlist" style="width:254px; height:208px" ></a>
 </p>
 
 <div align="center">
@@ -13,11 +13,11 @@ The script for selenium in python
 <!-- prettier-ignore-end -->
 
 <p align="center">
-  <a href="https://pypi.python.org/pypi/crawlist">
-    <img src="https://img.shields.io/pypi/v/crawlist" alt="pypi">
+  <a href="https://pypi.python.org/pypi/crawlipt">
+    <img src="https://img.shields.io/pypi/v/crawlipt" alt="pypi">
   </a>
   <img src="https://img.shields.io/badge/python-3.10.0+-blue" alt="python">
-  <a href="https://github.com/WwwwwyDev/crawlist/stargazers"><img src="https://img.shields.io/github/stars/WwwwwyDev/crawlist" alt="GitHub stars"style="max-width: 100%;">
+  <a href="https://github.com/WwwwwyDev/crawlipt/stargazers"><img src="https://img.shields.io/github/stars/WwwwwyDev/crawlipt" alt="GitHub stars"style="max-width: 100%;">
   </a>
   <br/>
 </p>
@@ -68,7 +68,7 @@ cpt.Script(script, interval=2)(webdriver)
 
 ## Documenting
 If you are interested and would like to see more detailed documentation, please click on the picture below.\
- <a href="https://wwydev.gitbook.io/crawlipt/"><img src="https://s2.loli.net/2024/04/12/5gOBimSY4oklGys.png" alt="crawlist" style="width:220px; height:100px" ></a>
+ <a href="https://wwydev.gitbook.io/crawlipt/"><img src="https://s2.loli.net/2024/04/12/5gOBimSY4oklGys.png" alt="crawlist" style="width:287px; height:123px" ></a>
 
 ## Contributing
 Please submit pull requests to the develop branch
