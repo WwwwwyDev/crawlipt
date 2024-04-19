@@ -72,6 +72,7 @@ class Script:
         """
         script = self.script
         deep = 0
+        pre_return = None
         while script:
             deep += 1
             temp = copy.deepcopy(script)
@@ -82,7 +83,20 @@ class Script:
                 temp.pop("next")
             temp.pop("method")
             temp["driver"] = None
+            check_keys = []
+            if pre_return is not None:
+                for key, value in temp.items():
+                    if value == "__PRE_RETURN__":
+                        check_keys.append(key)
+                for key in check_keys:
+                    if pre_return != signature(Script.ACTIONS[method]).parameters[key].annotation:
+                        name = key
+                        annotation = signature(Script.ACTIONS[method]).parameters[key].annotation
+                        msg = f"The pre-return is {pre_return}, But parameter {name} is {annotation}."
+                        e = ParamTypeError(msg)
+                        self.error(e, method, deep)
             try:
+                pre_return = signature(Script.ACTIONS[method]).return_annotation
                 Script.ACTIONS[method](**temp)
             except TypeError as e:
                 Script.error(e, method, deep)
