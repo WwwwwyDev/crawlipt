@@ -89,11 +89,10 @@ class Script:
                 for key, value in temp.items():
                     if value == "__PRE_RETURN__":
                         check_keys.append(key)
+                annotation = signature(Script.ACTIONS[method]).parameters[key].annotation
                 for key in check_keys:
-                    if pre_return != signature(Script.ACTIONS[method]).parameters[key].annotation:
-                        name = key
-                        annotation = signature(Script.ACTIONS[method]).parameters[key].annotation
-                        msg = f"The pre-return is {pre_return}, But parameter {name} is {annotation}."
+                    if pre_return != annotation:
+                        msg = f"The pre-return is {pre_return}, But parameter {key} is {annotation}."
                         e = ParamTypeError(msg)
                         Script.error(e, method, deep)
             try:
