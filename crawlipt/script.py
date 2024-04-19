@@ -41,7 +41,7 @@ class Script:
             self.script = json.loads(script)
         else:
             self.script = script
-        self.check_script()
+        Script.check_script(self.script)
         self.interval = interval
 
     @check
@@ -66,11 +66,12 @@ class Script:
             script = script.get("next")
             time.sleep(random.uniform(self.interval / 2, self.interval))
 
-    def check_script(self) -> None:
+    @staticmethod
+    @check
+    def check_script(script: dict | str) -> None:
         """
         Script syntax check
         """
-        script = self.script
         deep = 0
         pre_return = None
         while script:
@@ -94,7 +95,7 @@ class Script:
                         annotation = signature(Script.ACTIONS[method]).parameters[key].annotation
                         msg = f"The pre-return is {pre_return}, But parameter {name} is {annotation}."
                         e = ParamTypeError(msg)
-                        self.error(e, method, deep)
+                        Script.error(e, method, deep)
             try:
                 pre_return = signature(Script.ACTIONS[method]).return_annotation
                 Script.ACTIONS[method](**temp)
