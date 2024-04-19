@@ -18,7 +18,7 @@ URL = 'https://github.com/WwwwwyDev/crawlipt'
 EMAIL = 'me@example.com'
 AUTHOR = 'WwwwwyDev'
 REQUIRES_PYTHON = '>=3.10.0'
-VERSION = '0.0.0'
+VERSION = '0.0.1'
 
 # What packages are required for this module to be executed?
 REQUIRED = [
