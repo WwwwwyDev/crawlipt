@@ -10,11 +10,17 @@ from inspect import signature
 
 
 class ScriptError(Exception):
-    def __init__(self, message):
-        self.message = message
+    def __init__(self, e: Exception, method: str, deep: int):
+        self.e = e
+        self.method = method
+        self.deep = deep
 
     def __str__(self):
-        return self.message
+        doc: str = Script.ACTIONS[self.method].__doc__
+        info = "----------------------method info--------------------------"
+        params = "\ndef " + self.method + " " + signature(Script.ACTIONS[self.method]).__str__()
+        error = "[" + self.e.__class__.__name__ + "] " + self.e.__str__() + "\n"
+        return "(Deep:%d method:%s) arguments is wrong\n" % (self.deep, self.method) + error + info + params + doc
 
 
 def get_action_dict():
@@ -84,38 +90,26 @@ class Script:
                 temp.pop("next")
             temp.pop("method")
             temp["driver"] = None
-            check_keys = []
             if pre_return is not None:
                 for key, value in temp.items():
                     if value == "__PRE_RETURN__":
-                        check_keys.append(key)
-                annotation = signature(Script.ACTIONS[method]).parameters[key].annotation
-                for key in check_keys:
-                    if pre_return != annotation:
-                        msg = f"The pre-return is {pre_return}, But parameter {key} is {annotation}."
-                        e = ParamTypeError(msg)
-                        Script.error(e, method, deep)
+                        annotation = signature(Script.ACTIONS[method]).parameters[key].annotation
+                        if pre_return != annotation:
+                            msg = f"The pre-return is {pre_return}, But parameter {key} is {annotation}."
+                            e = ParamTypeError(msg)
+                            raise ScriptError(e, method, deep)
             try:
                 pre_return = signature(Script.ACTIONS[method]).return_annotation
                 Script.ACTIONS[method](**temp)
             except TypeError as e:
-                Script.error(e, method, deep)
+                raise ScriptError(e, method, deep)
             except AssertionError as e:
-                Script.error(e, method, deep)
+                raise ScriptError(e, method, deep)
             except ParamTypeError as e:
-                Script.error(e, method, deep)
+                raise ScriptError(e, method, deep)
             except Exception:
                 pass
             script = script.get("next")
-
-    @staticmethod
-    def error(e: Exception, method: str, deep: int) -> None:
-        doc: str = Script.ACTIONS[method].__doc__
-        info = "----------------------method info--------------------------"
-        params = "\ndef " + method + " " + signature(Script.ACTIONS[method]).__str__()
-        error = "[" + e.__class__.__name__ + "] " + e.__str__() + "\n"
-        raise ScriptError(
-            "(Deep:%d method:%s) arguments is wrong\n" % (deep, method) + error + info + params + doc)
 
     def __call__(self, webdriver: WebDriver):
         return self.process(webdriver)
