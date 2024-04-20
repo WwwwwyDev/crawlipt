@@ -56,7 +56,6 @@ def check(exclude: list | str):
                     continue
                 if isinstance(all_kwargs[name], int) and type_.annotation is float:
                     all_kwargs[name] = float(all_kwargs.get(name))
-                print(type_.annotation)
                 if not isinstance(all_kwargs[name], type_.annotation):
                     raise ParamTypeError(f"Parameter {name} must be {type_.annotation}.")
             return func(*args, **kwargs)

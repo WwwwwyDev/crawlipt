@@ -10,16 +10,16 @@ from crawlipt.annotation import check
 class Input:
     @staticmethod
     @check(exclude="driver")
-    def input(driver: WebDriver, xpath: str, keyword: str) -> None:
+    def input(driver: WebDriver, xpath: str, text: str) -> None:
         """
         Handling keyboard input events
         :param driver: selenium webdriver
         :param xpath: The xpath path of the input box
-        :param keyword: keyword needs to be passed in
+        :param text: text needs to be passed in
         """
         WebDriverWait(driver, 3).until(EC.presence_of_element_located((By.XPATH, xpath)))
         element = driver.find_element(By.XPATH, xpath)
-        element.send_keys(keyword)
+        element.send_keys(text)
 
     @staticmethod
     @check(exclude="driver")

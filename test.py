@@ -1,3 +1,4 @@
+import time
 import unittest
 
 from webdriver_manager.chrome import ChromeDriverManager
@@ -21,7 +22,7 @@ class TestCase(unittest.TestCase):
             "next": {
                 "method": "input",
                 "xpath": "//*[@id=\"kw\"]",
-                "keyword": "百度贴吧",
+                "text": "百度贴吧",
                 "next": {
                     "method": "click",
                     "xpath": "//*[@id=\"su\"]"
@@ -39,7 +40,7 @@ class TestCase(unittest.TestCase):
             "next": {
                 "method": "input",
                 "xpath": "//*[@id=\"kw\"]",
-                "keyword": "__PRE_RETURN__",
+                "text": "__PRE_RETURN__",
                 "next": {
                     "method": "click",
                     "xpath": "//*[@id=\"su\"]"
@@ -66,11 +67,11 @@ class TestCase(unittest.TestCase):
         }, {
             "method": "input",
             "xpath": "//*[@id=\"username\"]",
-            "keyword": "773323518@qq.com",
+            "text": "773323518@qq.com",
         }, {
             "method": "input",
             "xpath": "//*[@id=\"password\"]",
-            "keyword": "testtest",
+            "text": "testtest",
         }, {
             "method": "click",
             "xpath": "//*[@id=\"account\"]/div[2]/div[2]/div/div[2]/div[1]/div[4]/a",
@@ -86,6 +87,43 @@ class TestCase(unittest.TestCase):
         print(script)
         webdriver.quit()
 
+    def test_04(self):
+        option = wd.ChromeOptions()
+        arguments = [
+            "no-sandbox",
+            "--disable-extensions",
+            '--disable-gpu',
+            'User-Agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36"',
+            "window-size=1920x3000",
+            "start-maximized",
+            'cache-control="max-age=0"'
+            "disable-blink-features=AutomationControlled"
+        ]
+        for argument in arguments:
+            option.add_argument(argument)
+        # option.add_argument("--headless")
+        option.add_experimental_option('excludeSwitches', ['enable-automation'])
+        webdriver = wd.Chrome(service=Service(ChromeDriverManager().install()), options=option)
+        webdriver.execute_cdp_cmd("Page.addScriptToEvaluateOnNewDocument", {
+            "source": """
+            Object.defineProperty(navigator, 'webdriver', {
+              get: () => false
+            })
+          """
+        })
+        step = [{
+            "method": "redirect",
+            "url": "https://www.boc.cn/sourcedb/whpj/",
+        }, {
+            "method": "selectByText",
+            "xpath": "//*[@id=\"pjname\"]",
+            "text": "新加坡元"
+        },]
+        script = cpt.Script.generate(step)
+        print(script)
+        cpt.Script(script, interval=5)(webdriver)
+        print(script)
+        webdriver.quit()
 
 if __name__ == '__main__':
     unittest.main()
