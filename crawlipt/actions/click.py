@@ -9,12 +9,12 @@ from crawlipt.annotation import check
 class Click:
     @staticmethod
     @check(exclude="driver")
-    def click(driver: WebDriver, xpath: str,) -> None:
+    def click(driver: WebDriver, xpath: str) -> None:
         """
         Handling click events
         :param driver: selenium webdriver
         :param xpath: click on the xpath path of the button
         """
-        WebDriverWait(driver, 2).until(EC.presence_of_element_located((By.XPATH, xpath)))
+        WebDriverWait(driver, 3).until(EC.presence_of_element_located((By.XPATH, xpath)))
         element = driver.find_element(By.XPATH, xpath)
         driver.execute_script("arguments[0].click();", element)
