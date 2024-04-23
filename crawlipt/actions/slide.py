@@ -16,10 +16,9 @@ class Slide:
         :param xpath: The element to be slid
         :param position: The x, y position
         """
+        assert len(position) == 2
         WebDriverWait(driver, 3).until(EC.presence_of_element_located((By.XPATH, xpath)))
         slider = driver.find_element(By.XPATH, xpath)
-        if len(position) != 2:
-            return
         x, y = position
         start_x = slider.location["x"]
         end_x = start_x + x

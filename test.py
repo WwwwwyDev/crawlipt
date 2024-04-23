@@ -11,7 +11,7 @@ class TestCase(unittest.TestCase):
     def test_01(self):
         option = wd.ChromeOptions()
         option.add_argument("start-maximized")
-        # option.add_argument("--headless")
+        option.add_argument("--headless")
         option.add_argument("window-size=1920x3000")
         agent = 'user-agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36"'
         option.add_argument(agent)
@@ -30,7 +30,6 @@ class TestCase(unittest.TestCase):
             }
         }
         cpt.Script(script, interval=2)(webdriver)
-        print(script)
         webdriver.quit()
 
     def test_02(self):
@@ -53,7 +52,7 @@ class TestCase(unittest.TestCase):
     def test_03(self):
         option = wd.ChromeOptions()
         option.add_argument("start-maximized")
-        # option.add_argument("--headless")
+        option.add_argument("--headless")
         option.add_argument("window-size=1920x3000")
         agent = 'user-agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36"'
         option.add_argument(agent)
@@ -80,11 +79,9 @@ class TestCase(unittest.TestCase):
             "xpath": "//*[@id=\"tcaptcha_iframe_dy\"]",
         }, {"method": "slide",
             "xpath": "//*[@id=\"tcOperation\"]/div[6]/img",
-            "position": [20, 0]}]
+            "position": [30, 0]}]
         script = cpt.Script.generate(step)
-        print(script)
         cpt.Script(script, interval=2)(webdriver)
-        print(script)
         webdriver.quit()
 
     def test_04(self):
@@ -101,7 +98,7 @@ class TestCase(unittest.TestCase):
         ]
         for argument in arguments:
             option.add_argument(argument)
-        # option.add_argument("--headless")
+        option.add_argument("--headless")
         option.add_experimental_option('excludeSwitches', ['enable-automation'])
         webdriver = wd.Chrome(service=Service(ChromeDriverManager().install()), options=option)
         webdriver.execute_cdp_cmd("Page.addScriptToEvaluateOnNewDocument", {
@@ -120,9 +117,7 @@ class TestCase(unittest.TestCase):
             "text": "新加坡元"
         },]
         script = cpt.Script.generate(step)
-        print(script)
         cpt.Script(script, interval=5)(webdriver)
-        print(script)
         webdriver.quit()
 
 if __name__ == '__main__':

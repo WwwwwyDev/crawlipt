@@ -3,6 +3,8 @@ import random
 import time
 import json
 from inspect import signature
+from typing import Any
+
 from selenium.webdriver.remote.webdriver import WebDriver
 
 from crawlipt.annotation import check, ParamTypeError
@@ -64,7 +66,7 @@ class Script:
         self.interval = interval
 
     @check
-    def process(self, webdriver: WebDriver) -> None:
+    def process(self, webdriver: WebDriver) -> Any:
         """
         process the script
         """
@@ -83,6 +85,7 @@ class Script:
             pre_return = Script.ACTIONS[method](**temp_args)
             script = script.get("next")
             time.sleep(random.uniform(self.interval / 2, self.interval))
+        return pre_return
 
     @staticmethod
     @check

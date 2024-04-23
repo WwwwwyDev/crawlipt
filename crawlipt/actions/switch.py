@@ -18,12 +18,14 @@ class Switch:
 
     @staticmethod
     @check(exclude="driver")
-    def switchTab(driver: WebDriver, index: int) -> None:
+    def switchTab(driver: WebDriver, index: int | str) -> None:
         """
         Switch to the index handle
         :param driver: selenium webdriver
         :param index: The index handle
         """
+        if isinstance(index, str):
+            index = int(index)
         window_handles = driver.window_handles
         driver.switch_to.window(window_handles[index])
 
@@ -41,7 +43,7 @@ class Switch:
 
     @staticmethod
     @check(exclude="driver")
-    def switchOutframe(driver: WebDriver) -> None:
+    def switchOutFrame(driver: WebDriver) -> None:
         """
         Switch to the outer frame
         :param driver: selenium webdriver
