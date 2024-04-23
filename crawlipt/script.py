@@ -1,4 +1,3 @@
-import os
 import random
 import time
 import json
@@ -9,7 +8,9 @@ from selenium.webdriver.remote.webdriver import WebDriver
 
 from crawlipt.annotation import check, ParamTypeError
 from crawlipt.action import Action
-
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.wait import WebDriverWait
 
 class ScriptError(Exception):
     def __init__(self, e: Exception, method: str, deep: int):
@@ -52,7 +53,7 @@ class Script:
     POP_KEY = {"method", "next"}
 
     @check
-    def __init__(self, script: dict | str, interval: float = 2):
+    def __init__(self, script: dict | str, interval: float = 0.5):
         """
         Script Parser
         :param script: Need a JSON str or dict that conforms to syntax conventions
@@ -82,6 +83,8 @@ class Script:
                 for key, value in temp_args.items():
                     if value == "__PRE_RETURN__":
                         temp_args[key] = pre_return
+            if "driver" in temp_args and "xpath" in temp_args:
+                WebDriverWait(temp_args["driver"], 10).until(EC.presence_of_element_located((By.XPATH, temp_args["xpath"])))
             pre_return = Script.ACTIONS[method](**temp_args)
             script = script.get("next")
             time.sleep(random.uniform(self.interval / 2, self.interval))
@@ -129,7 +132,7 @@ class Script:
     @check
     def generate(scripts: list) -> dict:
         """
-        generate the generate
+        generate the scripts(dict) from list
         """
         res = {}
         temp = res
@@ -138,6 +141,14 @@ class Script:
             temp["next"] = {}
             temp = temp["next"]
         return res
+
+    @staticmethod
+    @check
+    def generate_json(scripts: dict) -> str:
+        """
+        generate the scripts(str of json) from dict
+        """
+        return json.dumps(scripts)
 
     def __call__(self, webdriver: WebDriver):
         return self.process(webdriver)

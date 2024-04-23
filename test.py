@@ -1,3 +1,4 @@
+import random
 import time
 import unittest
 
@@ -51,7 +52,7 @@ class TestCase(unittest.TestCase):
                 }
             }
         }
-        cpt.Script(script, interval=2)(webdriver)
+        cpt.Script(script, interval=0.1)(webdriver)
         webdriver.quit()
 
     def test_02(self):
@@ -65,7 +66,7 @@ class TestCase(unittest.TestCase):
             "text": "新加坡元"
         }, ]
         script = cpt.Script.generate(step)
-        cpt.Script(script, interval=2)(webdriver)
+        cpt.Script(script, interval=0.1)(webdriver)
         webdriver.quit()
 
     def test_03(self):
@@ -94,7 +95,7 @@ class TestCase(unittest.TestCase):
             "xpath": "//*[@id=\"tcOperation\"]/div[6]/img",
             "position": [30, 0]}]
         script = cpt.Script.generate(step)
-        cpt.Script(script, interval=2)(webdriver)
+        cpt.Script(script, interval=0.1)(webdriver)
         webdriver.quit()
 
     def test_04(self):
@@ -111,13 +112,31 @@ class TestCase(unittest.TestCase):
             "xpath": "//*[@id=\"trans-selection\"]/div/span",
         }]
         script = cpt.Script.generate(step)
-        result = cpt.Script(script, interval=2)(webdriver)
+        result = cpt.Script(script, interval=0.1)(webdriver)
         print(result)
         webdriver.quit()
 
     def test05(self):
-        pass
+        webdriver = getDriver()
+        step = [{
+                "method": "redirect",
+                "url": "https://www.psy525.cn/ceshi/84307.html",
+            },{
+            "method": "click",
+            "xpath": "//*[@id=\"fun\"]/a"
+        }]
+        for i in range(90):
+            index = random.randint(1, 5)
+            step.append({
+                "method": "click",
+                "xpath": f"//*[@id=\"question_{i+1}\"]/fieldset/ul/li[{index}]"
+            })
 
+        scripts = cpt.Script.generate(step)
+        json = cpt.Script.generate_json(scripts)
+        print(json)
+        cpt.Script(scripts, interval=1)(webdriver)
+        webdriver.quit()
 
 if __name__ == '__main__':
     unittest.main()

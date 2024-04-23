@@ -17,7 +17,6 @@ class Input:
         :param xpath: The xpath path of the input box
         :param text: text needs to be passed in
         """
-        WebDriverWait(driver, 3).until(EC.presence_of_element_located((By.XPATH, xpath)))
         element = driver.find_element(By.XPATH, xpath)
         element.send_keys(text)
 
@@ -30,6 +29,5 @@ class Input:
         :param xpath: The xpath path of the input box
         :return: Whether successful
         """
-        WebDriverWait(driver, 3).until(EC.presence_of_element_located((By.XPATH, xpath)))
         element = driver.find_element(By.XPATH, xpath)
         element.send_keys(Keys.RETURN)

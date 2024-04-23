@@ -37,7 +37,6 @@ class Switch:
         :param driver: selenium webdriver
         :param xpath: The xpath of frame
         """
-        WebDriverWait(driver, 3).until(EC.presence_of_element_located((By.XPATH, xpath)))
         frame = driver.find_element(By.XPATH, xpath)
         driver.switch_to.frame(frame)
 

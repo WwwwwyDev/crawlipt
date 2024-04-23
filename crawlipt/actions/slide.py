@@ -17,7 +17,6 @@ class Slide:
         :param position: The x, y position
         """
         assert len(position) == 2
-        WebDriverWait(driver, 3).until(EC.presence_of_element_located((By.XPATH, xpath)))
         slider = driver.find_element(By.XPATH, xpath)
         x, y = position
         start_x = slider.location["x"]

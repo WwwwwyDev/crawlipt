@@ -18,7 +18,6 @@ class Select:
         :param xpath: the xpath path of the select element
         :param text: the text of selecting
         """
-        WebDriverWait(driver, 3).until(EC.presence_of_element_located((By.XPATH, xpath)))
         select = WebSelect(driver.find_element(By.XPATH, xpath))
         select.select_by_visible_text(text)
 
@@ -31,7 +30,6 @@ class Select:
         :param xpath: the xpath path of the select element
         :param value: the value of selecting
         """
-        WebDriverWait(driver, 3).until(EC.presence_of_element_located((By.XPATH, xpath)))
         select = WebSelect(driver.find_element(By.XPATH, xpath))
         select.select_by_value(value)
 
@@ -44,6 +42,5 @@ class Select:
         :param xpath: the xpath path of the select element
         :param index: the index of selecting
         """
-        WebDriverWait(driver, 3).until(EC.presence_of_element_located((By.XPATH, xpath)))
         select = WebSelect(driver.find_element(By.XPATH, xpath))
         select.select_by_index(index)
