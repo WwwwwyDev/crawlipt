@@ -40,29 +40,54 @@ from webdriver_manager.chrome import ChromeDriverManager
 from selenium import webdriver as wd
 from selenium.webdriver.chrome.service import Service
 import crawlipt as cpt
-option = wd.ChromeOptions()
-option.add_argument("start-maximized")
-option.add_argument("window-size=1920x3000")
-agent = 'user-agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36"'
-option.add_argument(agent)
-webdriver = wd.Chrome(service=Service(ChromeDriverManager().install()), options=option)
 
-# Define scripts
-# You can also deserialize JSON strings into a dictionary
-script = {
-    "method": "redirect",
-    "url": "https://www.baidu.com/",
-    "next": {
-        "method": "input",
-        "xpath": "//*[@id=\"kw\"]",
-        "keyword": "和泉雾纱",
+def getDriver(is_headless=False):
+    option = wd.ChromeOptions()
+    arguments = [
+        "no-sandbox",
+        "--disable-extensions",
+        '--disable-gpu',
+        'User-Agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36"',
+        "window-size=1920x3000",
+        "start-maximized",
+        'cache-control="max-age=0"'
+        "disable-blink-features=AutomationControlled"
+    ]
+    for argument in arguments:
+        option.add_argument(argument)
+    if is_headless:
+        option.add_argument("--headless")
+    option.add_experimental_option('excludeSwitches', ['enable-automation'])
+    webdriver = wd.Chrome(service=Service(ChromeDriverManager().install()), options=option)
+    webdriver.execute_cdp_cmd("Page.addScriptToEvaluateOnNewDocument", {
+        "source": """
+        Object.defineProperty(navigator, 'webdriver', {
+          get: () => false
+        })
+      """
+    })
+    return webdriver
+
+if __name__ == '__main__':
+    webdriver = getDriver()
+    # Define scripts
+    # You can also deserialize JSON strings into a dictionary
+    script = {
+        "method": "redirect",
+        "url": "https://www.baidu.com/",
         "next": {
-            "method": "click",
-            "xpath": "//*[@id=\"su\"]"
+            "method": "input",
+            "xpath": "//*[@id=\"kw\"]",
+            "keyword": "和泉雾纱",
+            "next": {
+                "method": "click",
+                "xpath": "//*[@id=\"su\"]"
+            }
         }
     }
-}
-# Execute script
-cpt.Script(script, interval=2)(webdriver)
+    # Execute script
+    cpt.Script(script, interval=2)(webdriver)
+```
 
+```python
 ```
