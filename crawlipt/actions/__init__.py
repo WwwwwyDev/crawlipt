@@ -4,3 +4,4 @@ from .redirect import Redirect
 from .click import Click
 from .slide import Slide
 from .select import Select
+from .get import Get
