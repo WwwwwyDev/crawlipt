@@ -31,7 +31,7 @@ script_dict = cpt.Script.json2dict(script_json)  # Load the json as a dict
 
 ### Execute script
 
-Scripts can map all action methods
+Scripts can map all action methods.
 
 ```python
 webdriver = getDriver()
@@ -41,4 +41,23 @@ loader = cpt.Script(script, interval=0.1)
 loader.process(webdriver) 
 # loader(webdriver) 
 webdriver.quit()
+```
+
+### Generate script through list
+
+When JSON is nested multiple times, it may cause the script to be too long and affect editing. At this point, the generate method can be used to convert the list into an executable JSON script.
+
+```python
+step = [{
+            "method": "redirect",
+            "url": "https://fanyi.baidu.com/mtpe-individual/multimodal#/",
+        }, {
+            "method": "input",
+            "xpath": "//*[@id=\"editor-text\"]/div[1]/div[1]/div/div/div/div",
+            "text": "你好，世界",
+        }, {
+            "method": "getInnerText",
+            "xpath": "//*[@id=\"trans-selection\"]/div/span",
+        }]
+script = cpt.Script.generate(step)
 ```
