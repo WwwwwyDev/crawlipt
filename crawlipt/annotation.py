@@ -52,6 +52,8 @@ def check(exclude: list | str):
                     raise ParamTypeError(f"Parameter {name} is not in the defined parameter list.")
                 if all_kwargs[name] is None and type_.default is not type_.empty:
                     continue
+                if all_kwargs[name] == "__PRE_RETURN__":
+                    continue
                 if isinstance(all_kwargs[name], int) and type_.annotation is float:
                     all_kwargs[name] = float(all_kwargs.get(name))
                 if not isinstance(all_kwargs[name], type_.annotation):
