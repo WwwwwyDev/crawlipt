@@ -88,6 +88,3 @@ if __name__ == '__main__':
     # Execute script
     cpt.Script(script, interval=2)(webdriver)
 ```
-
-```python
-```
