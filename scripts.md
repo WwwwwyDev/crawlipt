@@ -4,15 +4,16 @@ description: >-
   into Python's dict and then parsing it.
 ---
 
-# 🐻 scripts
+# 🐻 Scripts
 
 ### Conversion method
 
-<pre class="language-python"><code class="lang-python"><strong>import crawlipt as cpt
-</strong><strong>
-</strong><strong># the origin script you wrote
-</strong><strong>script = {
-</strong>    "method": "redirect",
+```python
+import crawlipt as cpt
+
+# the origin script you wrote
+script = { 
+    "method": "redirect",
     "url": "https://www.baidu.com/",
     "next": {
         "method": "input",
@@ -26,15 +27,18 @@ description: >-
 }
 script_json = cpt.Script.dict2json(script)  # Convert it to a string and store it in a database or other medium
 script_dict = cpt.Script.json2dict(script_json)  # Load the json as a dict
-</code></pre>
+```
 
 ### Execute script
 
-<pre class="language-python"><code class="lang-python">webdriver = getDriver()
-<strong># Pass in a JSON format script, which can be a Python dict or a JSON string
-</strong>loader = cpt.Script(script, interval=0.1)
+Scripts can map all action methods
+
+```python
+webdriver = getDriver()
+# Pass in a JSON format script, which can be a Python dict or a JSON string
+loader = cpt.Script(script, interval=0.1)
 # To execute the script, you need to pass in a selenium Webdriver object
 loader.process(webdriver) 
 # loader(webdriver) 
 webdriver.quit()
-</code></pre>
+```
