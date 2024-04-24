@@ -22,7 +22,7 @@ VERSION = '0.0.1'
 
 # What packages are required for this module to be executed?
 REQUIRED = [
-    "selenium>=4.0.0", "ddddocr"
+    "selenium>=4.0.0", "ddddocr",  'webdriver-manager'
 ]
 
 # What packages are optional?

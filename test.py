@@ -99,7 +99,7 @@ class TestCase(unittest.TestCase):
         webdriver.quit()
 
     def test_04(self):
-        webdriver = getDriver()
+        webdriver = getDriver(is_headless=True)
         step = [{
             "method": "redirect",
             "url": "https://fanyi.baidu.com/mtpe-individual/multimodal#/",
@@ -107,7 +107,7 @@ class TestCase(unittest.TestCase):
             "method": "input",
             "xpath": "//*[@id=\"editor-text\"]/div[1]/div[1]/div/div/div/div",
             "text": "你好，世界",
-        },{
+        }, {
             "method": "getInnerText",
             "xpath": "//*[@id=\"trans-selection\"]/div/span",
         }]
@@ -119,9 +119,9 @@ class TestCase(unittest.TestCase):
     def test05(self):
         webdriver = getDriver()
         step = [{
-                "method": "redirect",
-                "url": "https://www.psy525.cn/ceshi/84307.html",
-            },{
+            "method": "redirect",
+            "url": "https://www.psy525.cn/ceshi/84307.html",
+        }, {
             "method": "click",
             "xpath": "//*[@id=\"fun\"]/a"
         }]
@@ -129,7 +129,7 @@ class TestCase(unittest.TestCase):
             index = random.randint(1, 5)
             step.append({
                 "method": "click",
-                "xpath": f"//*[@id=\"question_{i+1}\"]/fieldset/ul/li[{index}]"
+                "xpath": f"//*[@id=\"question_{i + 1}\"]/fieldset/ul/li[{index}]"
             })
 
         scripts = cpt.Script.generate(step)
@@ -137,6 +137,8 @@ class TestCase(unittest.TestCase):
         print(json)
         cpt.Script(scripts, interval=1)(webdriver)
         webdriver.quit()
+
+
 
 if __name__ == '__main__':
     unittest.main()

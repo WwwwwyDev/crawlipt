@@ -3,14 +3,44 @@ import time
 import json
 from inspect import signature
 from typing import Any
-
 from selenium.webdriver.remote.webdriver import WebDriver
-
+from webdriver_manager.chrome import ChromeDriverManager
+from selenium import webdriver as wd
+from selenium.webdriver.chrome.service import Service
 from crawlipt.annotation import check, ParamTypeError
 from crawlipt.action import Action
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
+
+
+def getDriver(is_headless=False):
+    option = wd.ChromeOptions()
+    arguments = [
+        "no-sandbox",
+        "--disable-extensions",
+        '--disable-gpu',
+        'User-Agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36"',
+        "window-size=1920x3000",
+        "start-maximized",
+        'cache-control="max-age=0"'
+        "disable-blink-features=AutomationControlled"
+    ]
+    for argument in arguments:
+        option.add_argument(argument)
+    if is_headless:
+        option.add_argument("--headless")
+    option.add_experimental_option('excludeSwitches', ['enable-automation'])
+    webdriver = wd.Chrome(service=Service(ChromeDriverManager().install()), options=option)
+    webdriver.execute_cdp_cmd("Page.addScriptToEvaluateOnNewDocument", {
+        "source": """
+        Object.defineProperty(navigator, 'webdriver', {
+          get: () => false
+        })
+      """
+    })
+    return webdriver
+
 
 class ScriptError(Exception):
     def __init__(self, e: Exception, method: str, deep: int):
@@ -67,10 +97,14 @@ class Script:
         self.interval = interval
 
     @check
-    def process(self, webdriver: WebDriver) -> Any:
+    def process(self, webdriver: WebDriver = None) -> Any:
         """
         process the script
         """
+        is_use_default = False
+        if not webdriver:
+            is_use_default = True
+            webdriver = getDriver(is_headless=True)
         script = self.script
         pre_return = None
         while script:
@@ -84,10 +118,13 @@ class Script:
                     if value == "__PRE_RETURN__":
                         temp_args[key] = pre_return
             if "driver" in temp_args and "xpath" in temp_args:
-                WebDriverWait(temp_args["driver"], 10).until(EC.presence_of_element_located((By.XPATH, temp_args["xpath"])))
+                WebDriverWait(temp_args["driver"], 10).until(
+                    EC.presence_of_element_located((By.XPATH, temp_args["xpath"])))
             pre_return = Script.ACTIONS[method](**temp_args)
             script = script.get("next")
             time.sleep(random.uniform(self.interval / 2, self.interval))
+        if is_use_default:
+            webdriver.quit()
         return pre_return
 
     @staticmethod
@@ -144,11 +181,19 @@ class Script:
 
     @staticmethod
     @check
-    def generate_json(scripts: dict) -> str:
+    def dict2json(scripts_dict: dict) -> str:
         """
         generate the scripts(str of json) from dict
         """
-        return json.dumps(scripts)
+        return json.dumps(scripts_dict)
+
+    @staticmethod
+    @check
+    def json2dict(scripts_json: str) -> dict:
+        """
+        generate the scripts(str of json) from dict
+        """
+        return json.loads(scripts_json)
 
     def __call__(self, webdriver: WebDriver):
         return self.process(webdriver)
