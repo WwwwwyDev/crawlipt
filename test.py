@@ -1,12 +1,12 @@
 import random
-import time
 import unittest
-
+from selenium.webdriver.common.by import By
+from selenium.webdriver.remote.webdriver import WebDriver
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium import webdriver as wd
 from selenium.webdriver.chrome.service import Service
 import crawlipt as cpt
-
+import ddddocr as docr
 
 def getDriver(is_headless=False):
     option = wd.ChromeOptions()
@@ -138,6 +138,70 @@ class TestCase(unittest.TestCase):
         cpt.Script(scripts, interval=1)(webdriver)
         webdriver.quit()
 
+    def test06(self):
+        webdriver = getDriver()
+        @cpt.check(exclude="driver")
+        def crackCaptcha(driver: WebDriver, xpath: str) -> str:
+            """
+            Handling keyboard input events
+            :param driver: selenium webdriver
+            :param xpath: The xpath path of the captcha
+            """
+            element = driver.find_element(By.XPATH, xpath)
+            pic = element.screenshot_as_png
+            ocr = docr.DdddOcr(show_ad=False)
+            res = ocr.classification(pic)
+            return res
+
+        cpt.Script.add_action(crackCaptcha)
+        step = [{
+            "method": "redirect",
+            "url": "http://www.shuhai.com/login",
+        },{
+            "method": "input",
+            "xpath": "//*[@id=\"login_form\"]/div[2]/div[1]/div[2]/input",
+            "text": "username",
+        },{
+            "method": "input",
+            "xpath": "//*[@id=\"login_form\"]/div[2]/div[2]/div[2]/input",
+            "text": "password",
+        },{
+            "method": "crackCaptcha",
+            "xpath": "//*[@id=\"checkcode2\"]",
+        },{
+            "method": "input",
+            "xpath": "//*[@id=\"login_form\"]/div[2]/div[3]/div[2]/input",
+            "text" : "__PRE_RETURN__"
+        },{
+            "method": "click",
+            "xpath": "//*[@id=\"dosubmit\"]",
+        }]
+        scripts = cpt.Script.generate(step)
+        cpt.Script(scripts, interval=3)(webdriver)
+        webdriver.quit()
+
+    def test07(self):
+        webdriver = getDriver()
+        step = [{
+            "method": "redirect",
+            "url": "https://artsandculture.google.com/",
+        },{
+            "method": "click",
+            "xpath": "//*[@id=\"yDmH0d\"]/div[2]/div[1]/div[3]/div[2]/span/span",
+        },{
+            "method": "getInnerText",
+            "xpath": "//*[@id=\"yDmH0d\"]/div[2]/div[2]/div/div[3]/div/ul/div/li[1]/a"
+        },{
+            "method": "input",
+            "xpath": "//*[@id=\"yDmH0d\"]/div[2]/div[2]/div/input",
+            "text": "__PRE_RETURN__",
+        },{
+            "method": "enter",
+            "xpath": "//*[@id=\"yDmH0d\"]/div[2]/div[2]/div/input",
+        }]
+        scripts = cpt.Script.generate(step)
+        cpt.Script(scripts, interval=1)(webdriver)
+        webdriver.quit()
 
 
 if __name__ == '__main__':
