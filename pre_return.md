@@ -8,8 +8,9 @@ description: >-
 
 ### Return value in the middle
 
-<pre class="language-python"><code class="lang-python"><strong>script = {
-</strong>	"method": "getInnerText",
+```python
+script = {
+	"method": "getInnerText",
 	"xpath": "//*[@id=\"yDmH0d\"]/div[2]/div[2]/div/div[3]/div/ul/div/li[1]/a",
 	"next": {
 		"method": "input",
@@ -17,7 +18,7 @@ description: >-
 		"text": "__PRE_RETURN__" # The text parameter of the input action will be the return value of the previous action
 	}
 }
-</code></pre>
+```
 
 ### Return value at the end
 
