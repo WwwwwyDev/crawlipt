@@ -4,6 +4,8 @@ description: Drive your selenium's webdriver to handle some web page interaction
 
 # 🐻 Actions
 
+### Built in methods
+
 | methods        | parms                                                                                                                                                             | return |
 | -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ |
 | click          | xpath : str– Click on the xpath path of the button                                                                                                                | None   |
