@@ -17,7 +17,7 @@ class Click:
         :param xpath: click on the xpath path of the button
         """
         element = driver.find_element(By.XPATH, xpath)
-        driver.execute_script("arguments[0].click();", element)
+        element.click()
 
     @staticmethod
     @check(exclude="driver")
@@ -34,7 +34,17 @@ class Click:
         element = driver.find_element(By.XPATH, xpath)
         while cnt:
             cnt -= 1
-            driver.execute_script("arguments[0].click();", element)
+            element.click()
             time.sleep(random.uniform(frequency/2, frequency))
 
+    @staticmethod
+    @check(exclude="driver")
+    def clickByJs(driver: WebDriver, xpath: str) -> None:
+        """
+        Handling click events by js 'arguments[0].click();'
+        :param driver: selenium webdriver
+        :param xpath: click on the xpath path of the button
+        """
+        element = driver.find_element(By.XPATH, xpath)
+        driver.execute_script("arguments[0].click();", element)
 

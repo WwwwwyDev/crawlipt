@@ -140,6 +140,9 @@ class TestCase(unittest.TestCase):
             "method": "redirect",
             "url": "https://fanyi.baidu.com/mtpe-individual/multimodal#/",
         }, {
+            "method": "redirect",
+            "url": "https://fanyi.baidu.com/mtpe-individual/multimodal#/",
+        }, {
             "method": "input",
             "xpath": "//*[@id=\"editor-text\"]/div[1]/div[1]/div/div/div/div",
             "text": "你好，世界",
@@ -241,24 +244,32 @@ class TestCase(unittest.TestCase):
         webdriver.quit()
 
     def test_loop(self):
-        webdriver = get_driver()
+        # webdriver = get_driver()
         step = [{
             "method": "redirect",
-            "url": "https://artsandculture.google.com/",
+            "url": "https://www.bchrt.com/tools/click-counter/",
         }, {
-            "method": "click",
-            "xpath": "//*[@id=\"yDmH0d\"]/div[2]/div[1]/div[3]/div[2]/span/span",
-        }, {
-            "method": "getInnerText",
-            "xpath": "//*[@id=\"yDmH0d\"]/div[2]/div[2]/div/div[3]/div/ul/div/li[1]/a"
-        }, {
-            "method": "input",
-            "xpath": "//*[@id=\"yDmH0d\"]/div[2]/div[2]/div/input",
-            "text": "__PRE_RETURN__",
-        }, {
-            "method": "enter",
-            "xpath": "//*[@id=\"yDmH0d\"]/div[2]/div[2]/div/input",
+            "loop": {
+                "cnt": 5,
+                "script": [
+                    {
+                        "method": "click",
+                        "xpath": "//*[@id=\"addbtn\"]",
+                    },
+                    {
+                        "method": "click",
+                        "xpath": "//*[@id=\"addbtn\"]",
+                    },
+                    {
+                        "method": "click",
+                        "xpath": "//*[@id=\"subbtn\"]",
+                    }
+                ]
+            }
         }]
+        script = cpt.Script.generate(step)
+        cpt.Script(script)
+        # cpt.Script(script)
 
 
 if __name__ == '__main__':
