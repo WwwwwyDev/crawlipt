@@ -1,5 +1,7 @@
 import random
 import unittest
+
+from selenium.webdriver import DesiredCapabilities
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 from webdriver_manager.chrome import ChromeDriverManager
@@ -8,7 +10,8 @@ from selenium.webdriver.chrome.service import Service
 import crawlipt as cpt
 import ddddocr as docr
 
-def getDriver(is_headless=False):
+
+def get_driver(is_headless=False, is_eager=False):
     option = wd.ChromeOptions()
     arguments = [
         "no-sandbox",
@@ -24,6 +27,8 @@ def getDriver(is_headless=False):
         option.add_argument(argument)
     if is_headless:
         option.add_argument("--headless")
+    if not is_eager:
+        option.page_load_strategy = 'eager'
     option.add_experimental_option('excludeSwitches', ['enable-automation'])
     webdriver = wd.Chrome(service=Service(ChromeDriverManager().install()), options=option)
     webdriver.execute_cdp_cmd("Page.addScriptToEvaluateOnNewDocument", {
@@ -36,9 +41,40 @@ def getDriver(is_headless=False):
     return webdriver
 
 
+def get_remote_driver(webdriver_url, is_eager=False) -> WebDriver:
+    option = wd.ChromeOptions()
+    arguments = [
+        "no-sandbox",
+        "--disable-extensions",
+        '--disable-gpu',
+        'User-Agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36"',
+        "window-size=1920x3000",
+        "start-maximized",
+        'cache-control="max-age=0"',
+        "disable-blink-features=AutomationControlled"
+    ]
+    for argument in arguments:
+        option.add_argument(argument)
+    option.add_argument("--headless")
+    if not is_eager:
+        option.page_load_strategy = 'eager'
+    option.set_capability('cloud:options', DesiredCapabilities.CHROME)
+    option.add_experimental_option('excludeSwitches', ['enable-automation'])
+    webdriver = wd.Remote(command_executor=webdriver_url, options=option)
+    webdriver.execute_cdp_cmd("Page.addScriptToEvaluateOnNewDocument", {
+        "source": """
+            Object.defineProperty(navigator, 'webdriver', {
+              get: () => false
+            })
+          """
+    })
+    webdriver.implicitly_wait(10)
+    return webdriver
+
+
 class TestCase(unittest.TestCase):
     def test_01(self):
-        webdriver = getDriver()
+        webdriver = get_driver()
         script = {
             "method": "redirect",
             "url": "https://www.baidu.com/",
@@ -56,7 +92,7 @@ class TestCase(unittest.TestCase):
         webdriver.quit()
 
     def test_02(self):
-        webdriver = getDriver()
+        webdriver = get_driver()
         step = [{
             "method": "redirect",
             "url": "https://www.boc.cn/sourcedb/whpj/",
@@ -70,7 +106,7 @@ class TestCase(unittest.TestCase):
         webdriver.quit()
 
     def test_03(self):
-        webdriver = getDriver()
+        webdriver = get_driver()
         step = [{
             "method": "redirect",
             "url": "https://accounts.douban.com/passport/login",
@@ -99,7 +135,7 @@ class TestCase(unittest.TestCase):
         webdriver.quit()
 
     def test_04(self):
-        webdriver = getDriver(is_headless=True)
+        webdriver = get_driver(is_headless=True)
         step = [{
             "method": "redirect",
             "url": "https://fanyi.baidu.com/mtpe-individual/multimodal#/",
@@ -117,7 +153,7 @@ class TestCase(unittest.TestCase):
         webdriver.quit()
 
     def test05(self):
-        webdriver = getDriver()
+        webdriver = get_driver()
         step = [{
             "method": "redirect",
             "url": "https://www.psy525.cn/ceshi/84307.html",
@@ -139,7 +175,8 @@ class TestCase(unittest.TestCase):
         webdriver.quit()
 
     def test06(self):
-        webdriver = getDriver()
+        webdriver = get_driver()
+
         @cpt.check(exclude="driver")
         def crackCaptcha(driver: WebDriver, xpath: str) -> str:
             """
@@ -157,22 +194,22 @@ class TestCase(unittest.TestCase):
         step = [{
             "method": "redirect",
             "url": "http://www.shuhai.com/login",
-        },{
+        }, {
             "method": "input",
             "xpath": "//*[@id=\"login_form\"]/div[2]/div[1]/div[2]/input",
             "text": "username",
-        },{
+        }, {
             "method": "input",
             "xpath": "//*[@id=\"login_form\"]/div[2]/div[2]/div[2]/input",
             "text": "password",
-        },{
+        }, {
             "method": "crackCaptcha",
             "xpath": "//*[@id=\"checkcode2\"]",
-        },{
+        }, {
             "method": "input",
             "xpath": "//*[@id=\"login_form\"]/div[2]/div[3]/div[2]/input",
-            "text" : "__PRE_RETURN__"
-        },{
+            "text": "__PRE_RETURN__"
+        }, {
             "method": "click",
             "xpath": "//*[@id=\"dosubmit\"]",
         }]
@@ -181,27 +218,47 @@ class TestCase(unittest.TestCase):
         webdriver.quit()
 
     def test07(self):
-        webdriver = getDriver()
+        webdriver = get_driver()
         step = [{
             "method": "redirect",
             "url": "https://artsandculture.google.com/",
-        },{
+        }, {
             "method": "click",
             "xpath": "//*[@id=\"yDmH0d\"]/div[2]/div[1]/div[3]/div[2]/span/span",
-        },{
+        }, {
             "method": "getInnerText",
             "xpath": "//*[@id=\"yDmH0d\"]/div[2]/div[2]/div/div[3]/div/ul/div/li[1]/a"
-        },{
+        }, {
             "method": "input",
             "xpath": "//*[@id=\"yDmH0d\"]/div[2]/div[2]/div/input",
             "text": "__PRE_RETURN__",
-        },{
+        }, {
             "method": "enter",
             "xpath": "//*[@id=\"yDmH0d\"]/div[2]/div[2]/div/input",
         }]
         scripts = cpt.Script.generate(step)
         cpt.Script(scripts, interval=1)(webdriver)
         webdriver.quit()
+
+    def test_loop(self):
+        webdriver = get_driver()
+        step = [{
+            "method": "redirect",
+            "url": "https://artsandculture.google.com/",
+        }, {
+            "method": "click",
+            "xpath": "//*[@id=\"yDmH0d\"]/div[2]/div[1]/div[3]/div[2]/span/span",
+        }, {
+            "method": "getInnerText",
+            "xpath": "//*[@id=\"yDmH0d\"]/div[2]/div[2]/div/div[3]/div/ul/div/li[1]/a"
+        }, {
+            "method": "input",
+            "xpath": "//*[@id=\"yDmH0d\"]/div[2]/div[2]/div/input",
+            "text": "__PRE_RETURN__",
+        }, {
+            "method": "enter",
+            "xpath": "//*[@id=\"yDmH0d\"]/div[2]/div[2]/div/input",
+        }]
 
 
 if __name__ == '__main__':
