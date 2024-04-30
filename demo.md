@@ -42,7 +42,7 @@ from selenium.webdriver.chrome.service import Service
 import crawlipt as cpt
 import ddddocr as docr
 
-def getDriver(is_headless=False):
+def get_driver(is_headless=False):
     option = wd.ChromeOptions()
     arguments = [
         "no-sandbox",
@@ -75,7 +75,7 @@ def getDriver(is_headless=False):
 Search in baidu
 
 ```python
-webdriver = getDriver()
+webdriver = get_driver()
 script = {
     "method": "redirect",
     "url": "https://www.baidu.com/",
@@ -98,7 +98,7 @@ webdriver.quit()
 Translate using Baidu Translate
 
 ```python
-webdriver = getDriver(is_headless=True)
+webdriver = get_driver(is_headless=True)
 step = [{
     "method": "redirect",
     "url": "https://fanyi.baidu.com/mtpe-individual/multimodal#/",
@@ -121,7 +121,7 @@ webdriver.quit()
 Automatic problem-solving
 
 ```python
-webdriver = getDriver()
+webdriver = get_driver()
 step = [{
     "method": "redirect",
     "url": "https://www.psy525.cn/ceshi/84307.html",
@@ -148,7 +148,7 @@ webdriver.quit()
 The application of "\_\_ PRE RETURN\_\_"
 
 ```python
-webdriver = getDriver()
+webdriver = get_driver()
 step = [{
     "method": "redirect",
     "url": "https://artsandculture.google.com/",
@@ -176,7 +176,7 @@ webdriver.quit()
 Add your own action to crack the verification code
 
 ```python
-webdriver = getDriver()
+webdriver = get_driver()
 @cpt.check(exclude="driver")
 def crackCaptcha(driver: WebDriver, xpath: str) -> str:
     """
