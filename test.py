@@ -101,8 +101,7 @@ class TestCase(unittest.TestCase):
             "xpath": "//*[@id=\"pjname\"]",
             "text": "新加坡元"
         }, ]
-        script = cpt.Script.generate(step)
-        cpt.Script(script, interval=0.1)(webdriver)
+        cpt.Script(step, interval=0.1)(webdriver)
         webdriver.quit()
 
     def test_03(self):
@@ -130,8 +129,7 @@ class TestCase(unittest.TestCase):
         }, {"method": "slide",
             "xpath": "//*[@id=\"tcOperation\"]/div[6]/img",
             "position": [30, 0]}]
-        script = cpt.Script.generate(step)
-        cpt.Script(script, interval=0.1)(webdriver)
+        cpt.Script(step, interval=0.1)(webdriver)
         webdriver.quit()
 
     def test_04(self):
@@ -150,8 +148,7 @@ class TestCase(unittest.TestCase):
             "method": "getInnerText",
             "xpath": "//*[@id=\"trans-selection\"]/div/span",
         }]
-        script = cpt.Script.generate(step)
-        result = cpt.Script(script, interval=0.1)(webdriver)
+        result = cpt.Script(step, interval=0.1)(webdriver)
         print(result)
         webdriver.quit()
 
@@ -170,11 +167,7 @@ class TestCase(unittest.TestCase):
                 "method": "click",
                 "xpath": f"//*[@id=\"question_{i + 1}\"]/fieldset/ul/li[{index}]"
             })
-
-        scripts = cpt.Script.generate(step)
-        json = cpt.Script.generate_json(scripts)
-        print(json)
-        cpt.Script(scripts, interval=1)(webdriver)
+        cpt.Script(step, interval=1)(webdriver)
         webdriver.quit()
 
     def test06(self):
@@ -216,8 +209,7 @@ class TestCase(unittest.TestCase):
             "method": "click",
             "xpath": "//*[@id=\"dosubmit\"]",
         }]
-        scripts = cpt.Script.generate(step)
-        cpt.Script(scripts, interval=3)(webdriver)
+        cpt.Script(step, interval=1)(webdriver)
         webdriver.quit()
 
     def test07(self):
@@ -239,27 +231,26 @@ class TestCase(unittest.TestCase):
             "method": "enter",
             "xpath": "//*[@id=\"yDmH0d\"]/div[2]/div[2]/div/input",
         }]
-        scripts = cpt.Script.generate(step)
-        cpt.Script(scripts, interval=1)(webdriver)
+        cpt.Script(step, interval=1)(webdriver)
         webdriver.quit()
 
     def test_loop(self):
-        # webdriver = get_driver()
+        webdriver = get_driver()
         step = [{
             "method": "redirect",
             "url": "https://www.bchrt.com/tools/click-counter/",
         }, {
             "loop": {
                 "cnt": 5,
-                "script": [
-                    {
-                        "method": "click",
-                        "xpath": "//*[@id=\"addbtn\"]",
-                    },
-                    {
-                        "method": "click",
-                        "xpath": "//*[@id=\"addbtn\"]",
-                    },
+                "script": [{
+                    "loop": {
+                        "cnt": 2,
+                        "script": {
+                            "method": "click",
+                            "xpath": "//*[@id=\"addbtn\"]",
+                        },
+                    }
+                },
                     {
                         "method": "click",
                         "xpath": "//*[@id=\"subbtn\"]",
@@ -267,9 +258,8 @@ class TestCase(unittest.TestCase):
                 ]
             }
         }]
-        script = cpt.Script.generate(step)
-        cpt.Script(script)
-        # cpt.Script(script)
+        cpt.Script(step)(webdriver)
+        webdriver.quit()
 
 
 if __name__ == '__main__':

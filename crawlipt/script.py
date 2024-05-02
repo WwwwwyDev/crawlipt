@@ -9,6 +9,7 @@ from crawlipt.action import Action
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
+import copy
 
 
 class ScriptError(Exception):
@@ -58,12 +59,11 @@ class ScriptProcess:
         Script syntax check
         """
         if isinstance(script, str):
-            script = ScriptProcess.json2dict(script)
+            script = json.loads(script)
         current_deep = 0
         pre_return = None
         while script and isinstance(script, dict):
             current_deep += 1
-            temp_args = {"driver": None}
             loop_temp: dict = script.get("loop")
             if loop_temp:
                 cnt = loop_temp.get("cnt")
@@ -71,9 +71,10 @@ class ScriptProcess:
                     msg = "(Deep %s) loop must set the param of cnt" % (pre_deep + str(current_deep))
                     raise ScriptError(ParamTypeError(msg), "", pre_deep + str(current_deep))
                 loop_script = loop_temp.get("script")
-                ScriptProcess.syntax_check(loop_script, pre_deep=str(current_deep) + "->")
+                ScriptProcess.syntax_check(loop_script, pre_deep=pre_deep + str(current_deep) + "->")
                 script = script.get("next")
                 continue
+            temp_args = {"driver": None}
             method = script.get("method")
             if not method:
                 msg = "(Deep %s) Method is missing" % (pre_deep + str(current_deep))
@@ -106,9 +107,46 @@ class ScriptProcess:
 
     @staticmethod
     @check
+    def process_script(script: dict, webdriver: WebDriver, interval: float = 0.5, wait: float = 10) -> Any:
+        """
+        process the script
+        """
+        script = copy.deepcopy(script)
+        pre_return = None
+        while script:
+            loop_temp: dict = script.get("loop")
+            if loop_temp:
+                cnt = loop_temp.get("cnt")
+                loop_script = loop_temp.get("script")
+                for _ in range(cnt):
+                    ScriptProcess.process_script(script=loop_script,
+                                                 webdriver=webdriver,
+                                                 interval=interval,
+                                                 wait=wait)
+                script = script.get("next")
+                continue
+            temp_args = {"driver": webdriver}
+            method = script.get("method")
+            for key, value in script.items():
+                if key.lower() not in Script.POP_KEY:
+                    temp_args[key] = value
+            if pre_return is not None:
+                for key, value in temp_args.items():
+                    if value == "__PRE_RETURN__":
+                        temp_args[key] = pre_return
+            if "driver" in temp_args and "xpath" in temp_args:
+                WebDriverWait(temp_args["driver"], wait).until(
+                    EC.presence_of_element_located((By.XPATH, temp_args["xpath"])))
+            pre_return = Script.ACTIONS[method](**temp_args)
+            script = script.get("next")
+            time.sleep(random.uniform(interval / 2, interval))
+        return pre_return
+
+    @staticmethod
+    @check
     def generate(scripts: list | dict) -> dict:
         """
-        generate the scripts(dict) from list
+        generate the scripts(dict) from list or dict
         """
         if isinstance(scripts, dict):
             return scripts
@@ -126,23 +164,17 @@ class ScriptProcess:
         return res
 
     @staticmethod
-    @check
-    def dict2json(scripts_dict: dict) -> str:
+    def generate_json(scripts: dict | list) -> str:
         """
-        generate the scripts(str of json) from dict
+        generate the scripts(str of json) from list or dict.
         """
-        return json.dumps(scripts_dict)
-
-    @staticmethod
-    @check
-    def json2dict(scripts_json: str) -> dict:
-        """
-        generate the scripts(str of json) from dict
-        """
-        return json.loads(scripts_json)
+        return json.dumps(ScriptProcess.generate(scripts))
 
     @staticmethod
     def add_action(func: callable) -> None:
+        """
+        add your own action
+        """
         if not callable(func):
             raise ParamTypeError("func must be a callable")
         ScriptProcess.ACTIONS[func.__name__] = func
@@ -151,43 +183,34 @@ class ScriptProcess:
 class Script(ScriptProcess):
 
     @check
-    def __init__(self, script: dict | str, interval: float = 0.5):
+    def __init__(self, script: dict | str | list, interval: float = 0.5, wait: float = 10):
         """
         Script Parser
-        :param script: Need a JSON str or dict that conforms to syntax conventions
+        :param script: Need a str of json or dict or list steps that conforms to syntax conventions
         :param interval: The direct interval between two consecutive scripts
+        :param wait: The longest wait time between two consecutive scripts
         """
         if isinstance(script, str):
-            self.script = ScriptProcess.json2dict(script)
+            self.script = json.loads(script)
+        elif isinstance(script, list):
+            self.script = ScriptProcess.generate(script)
         else:
             self.script = script
         ScriptProcess.syntax_check(self.script)
+        assert interval >= 0
+        assert wait >= 0
         self.interval = interval
+        self.wait = wait
 
     @check
     def process(self, webdriver: WebDriver) -> Any:
         """
         process the script
         """
-        script = self.script
-        pre_return = None
-        while script:
-            temp_args = {"driver": webdriver}
-            method = script.get("method")
-            for key, value in script.items():
-                if key.lower() not in Script.POP_KEY:
-                    temp_args[key] = value
-            if pre_return is not None:
-                for key, value in temp_args.items():
-                    if value == "__PRE_RETURN__":
-                        temp_args[key] = pre_return
-            if "driver" in temp_args and "xpath" in temp_args:
-                WebDriverWait(temp_args["driver"], 10).until(
-                    EC.presence_of_element_located((By.XPATH, temp_args["xpath"])))
-            pre_return = Script.ACTIONS[method](**temp_args)
-            script = script.get("next")
-            time.sleep(random.uniform(self.interval / 2, self.interval))
-        return pre_return
+        return ScriptProcess.process_script(script=self.script,
+                                            webdriver=webdriver,
+                                            interval=self.interval,
+                                            wait=self.wait)
 
     def __call__(self, webdriver: WebDriver):
         return self.process(webdriver)
