@@ -209,7 +209,8 @@ class TestCase(unittest.TestCase):
             "method": "click",
             "xpath": "//*[@id=\"dosubmit\"]",
         }]
-        cpt.Script(step, interval=1)(webdriver)
+        result = cpt.Script(step, interval=1)(webdriver)
+        print(result)
         webdriver.quit()
 
     def test07(self):
@@ -260,6 +261,23 @@ class TestCase(unittest.TestCase):
         }]
         cpt.Script(step)(webdriver)
         webdriver.quit()
+
+    def test_conditions(self):
+        # webdriver = get_driver()
+        step = [{
+            "method": "redirect",
+            "url": "https://www.baidu.com/",
+        }, {
+            "method": "click",
+            "xpath": "//*[@id=\"su\"]",
+            "if": {
+                "condition": "presence_of_element_located",
+                "xpath": "//*[@id=\"su\"]"
+            }
+        }]
+        cpt.Script(step)
+        cpt.Script(step).
+
 
 
 if __name__ == '__main__':
