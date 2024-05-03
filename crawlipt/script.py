@@ -50,6 +50,11 @@ def get_dict(obj):
     for key in list(all_dict.keys()):
         if key.startswith("__") and key.endswith("__"):
             all_dict.pop(key)
+    alias_dict = {}
+    for value in all_dict.values():
+        if "__crawlipt_func_name__" in value.__func__.__dict__:
+            alias_dict[value.__func__.__crawlipt_func_name__] = value
+    all_dict.update(alias_dict)
     return all_dict
 
 
@@ -155,13 +160,13 @@ class ScriptProcess:
         condition = temp_condition.get("condition")
         temp_args = {"driver": webdriver}
         for key, value in temp_condition.items():
-            if key.lower() not in Script.__POP_KEY:
+            if key.lower() not in ScriptProcess.__POP_KEY:
                 temp_args[key] = value
-        return Script.CONDITIONS[condition](**temp_args)
+        return ScriptProcess.CONDITIONS[condition](**temp_args)
 
     @staticmethod
     @check
-    def process_script(script: dict, webdriver: WebDriver, interval: float = 0.5, wait: float = 10) -> Any:
+    def _process_script(script: dict, global_script: dict, webdriver: WebDriver, interval: float, wait: float) -> Any:
         """
         process the script
         """
@@ -173,10 +178,11 @@ class ScriptProcess:
                 cnt = loop_temp.get("cnt")
                 loop_script = loop_temp.get("script")
                 for _ in range(cnt):
-                    ScriptProcess.process_script(script=loop_script,
-                                                 webdriver=webdriver,
-                                                 interval=interval,
-                                                 wait=wait)
+                    ScriptProcess._process_script(script=loop_script,
+                                                  global_script=global_script,
+                                                  webdriver=webdriver,
+                                                  interval=interval,
+                                                  wait=wait)
                 script = script.get("next")
                 continue
             check_condition = script.get("check")
@@ -195,7 +201,7 @@ class ScriptProcess:
             temp_args = {"driver": webdriver}
             method = script.get("method")
             for key, value in script.items():
-                if key.lower() not in Script.__POP_KEY:
+                if key.lower() not in ScriptProcess.__POP_KEY:
                     temp_args[key] = value
             if pre_return is not None:
                 for key, value in temp_args.items():
@@ -204,6 +210,12 @@ class ScriptProcess:
             if "driver" in temp_args and "xpath" in temp_args:
                 WebDriverWait(temp_args["driver"], wait).until(
                     EC.presence_of_element_located((By.XPATH, temp_args["xpath"])))
+            if global_script:
+                ScriptProcess._process_script(script=global_script,
+                                              global_script={},
+                                              webdriver=webdriver,
+                                              interval=interval,
+                                              wait=wait)
             current_return = Script.ACTIONS[method](**temp_args)
             if current_return is not None:
                 pre_return = current_return
@@ -215,7 +227,7 @@ class ScriptProcess:
     @check
     def generate(scripts: list | dict) -> dict:
         """
-        generate the scripts(dict) from list or dict
+        generate the scripts(dict) from list
         """
         if isinstance(scripts, dict):
             return scripts
@@ -251,6 +263,13 @@ class ScriptProcess:
         if signature(func).parameters["driver"].annotation is not WebDriver:
             raise ParamTypeError("the 'driver' parameter must be a WebDriver of selenium.")
         ScriptProcess.ACTIONS[func.__name__] = func
+        func_bak = func
+        try:
+            func = func.__func__
+        except Exception:
+            pass
+        if "__crawlipt_func_name__" in func.__dict__:
+            ScriptProcess.ACTIONS[func.__crawlipt_func_name__] = func_bak
 
     @staticmethod
     def add_condition(func: callable) -> None:
@@ -266,15 +285,24 @@ class ScriptProcess:
         if signature(func).return_annotation is not bool:
             raise ParamTypeError("the return of func must be the type of bool.")
         ScriptProcess.CONDITIONS[func.__name__] = func
+        func_bak = func
+        try:
+            func = func.__func__
+        except Exception:
+            pass
+        if "__crawlipt_func_name__" in func.__dict__:
+            ScriptProcess.CONDITIONS[func.__crawlipt_func_name__] = func_bak
 
 
 class Script(ScriptProcess):
 
     @check
-    def __init__(self, script: dict | str | list, interval: float = 0.5, wait: float = 10):
+    def __init__(self, script: dict | str | list, global_script: dict | str | list = None, interval: float = 0.5,
+                 wait: float = 10):
         """
         Script Parser
         :param script: Need a str of json or dict or list steps that conforms to syntax conventions
+        :param global_script: This script will be executed before every actions
         :param interval: The direct interval between two consecutive scripts
         :param wait: The longest wait time before presence of element located
         """
@@ -284,7 +312,16 @@ class Script(ScriptProcess):
             self.script = ScriptProcess.generate(script)
         else:
             self.script = script
+        if global_script is None:
+            self.global_script = {}
+        elif isinstance(global_script, str):
+            self.global_script = json.loads(global_script)
+        elif isinstance(global_script, list):
+            self.global_script = ScriptProcess.generate(global_script)
+        else:
+            self.global_script = global_script
         ScriptProcess.syntax_check(self.script)
+        ScriptProcess.syntax_check(self.global_script)
         assert interval >= 0
         assert wait >= 0
         self.interval = interval
@@ -295,10 +332,13 @@ class Script(ScriptProcess):
         """
         process the script
         """
-        return ScriptProcess.process_script(script=self.script,
-                                            webdriver=webdriver,
-                                            interval=self.interval,
-                                            wait=self.wait)
+        ScriptProcess.syntax_check(self.script)
+        ScriptProcess.syntax_check(self.global_script)
+        return ScriptProcess._process_script(script=self.script,
+                                             global_script=self.global_script,
+                                             webdriver=webdriver,
+                                             interval=self.interval,
+                                             wait=self.wait)
 
     def __call__(self, webdriver: WebDriver):
         return self.process(webdriver)

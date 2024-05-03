@@ -65,3 +65,28 @@ def check(exclude: list | str):
     if callable(exclude):
         return wrapper(exclude)
     return wrapper
+
+
+def alias(name: str = ""):
+    """
+    Add an alias to your newly added action or condition so that the script can resolve to this function through the alias
+    :param name: The name of func
+    :return: Decorator
+    """
+    if not callable(name):
+        assert isinstance(name, str)
+
+    def wrapper(func):
+        @wraps(func)
+        def inner_wrapper(*args, **kwargs):
+            if callable(name) or not name:
+                return func(*args, **kwargs)
+            func.__crawlipt_func_name__ = name
+            return func(*args, **kwargs)
+
+        inner_wrapper.__crawlipt_func_name__ = name
+        return inner_wrapper
+
+    if callable(name):
+        return wrapper(name)
+    return wrapper

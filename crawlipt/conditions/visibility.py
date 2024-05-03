@@ -3,13 +3,14 @@ from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
 
-from crawlipt.annotation import check
+from crawlipt.annotation import check, alias
 
 
 class Visibility:
 
     @staticmethod
     @check(exclude="driver")
+    @alias("visibility")
     def visibility_of_element_located(driver: WebDriver, xpath: str, wait: float = 1) -> bool:
         """
         An expectation for checking that an element is present on the DOM of a page and visible.Visibility means that the element is not only displayed but also has a height and width that is greater than 0.
@@ -23,6 +24,7 @@ class Visibility:
 
     @staticmethod
     @check(exclude="driver")
+    @alias("visibilities")
     def invisibility_of_element_located(driver: WebDriver, xpath: str, wait: float = 1) -> bool:
         """
         An Expectation for checking that an element is either invisible or not present on the DOM.

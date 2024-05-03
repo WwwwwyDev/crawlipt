@@ -171,22 +171,24 @@ class TestCase(unittest.TestCase):
         webdriver.quit()
 
     def test06(self):
-        webdriver = get_driver()
+        # webdriver = get_driver()
+        class A:
+            @staticmethod
+            @cpt.check(exclude="driver")
+            @cpt.alias("captcha")
+            def crackCaptcha(driver: WebDriver, xpath: str) -> str:
+                """
+                Handling keyboard input events
+                :param driver: selenium webdriver
+                :param xpath: The xpath path of the captcha
+                """
+                element = driver.find_element(By.XPATH, xpath)
+                pic = element.screenshot_as_png
+                ocr = docr.DdddOcr(show_ad=False)
+                res = ocr.classification(pic)
+                return res
 
-        @cpt.check(exclude="driver")
-        def crackCaptcha(driver: WebDriver, xpath: str) -> str:
-            """
-            Handling keyboard input events
-            :param driver: selenium webdriver
-            :param xpath: The xpath path of the captcha
-            """
-            element = driver.find_element(By.XPATH, xpath)
-            pic = element.screenshot_as_png
-            ocr = docr.DdddOcr(show_ad=False)
-            res = ocr.classification(pic)
-            return res
-
-        cpt.Script.add_action(crackCaptcha)
+        cpt.Script.add_action(A.crackCaptcha)
         step = [{
             "method": "redirect",
             "url": "http://www.shuhai.com/login",
@@ -199,7 +201,7 @@ class TestCase(unittest.TestCase):
             "xpath": "//*[@id=\"login_form\"]/div[2]/div[2]/div[2]/input",
             "text": "password",
         }, {
-            "method": "crackCaptcha",
+            "method": "captcha",
             "xpath": "//*[@id=\"checkcode2\"]",
         }, {
             "method": "input",
@@ -209,9 +211,9 @@ class TestCase(unittest.TestCase):
             "method": "click",
             "xpath": "//*[@id=\"dosubmit\"]",
         }]
-        result = cpt.Script(step, interval=1)(webdriver)
-        print(result)
-        webdriver.quit()
+        result = cpt.Script(step, interval=1)
+        # print(result)
+        # webdriver.quit()
 
     def test07(self):
         webdriver = get_driver()
@@ -264,20 +266,20 @@ class TestCase(unittest.TestCase):
 
     def test_conditions(self):
         # webdriver = get_driver()
+        # print(cpt.Script.CONDITIONS)
         step = [{
             "method": "redirect",
             "url": "https://www.baidu.com/",
         }, {
-            "method": "click",
-            "xpath": "//*[@id=\"su\"]",
+            "method": "input",
+            "xpath": "//*[@id=\"kw\"]",
+            "text": "your search text",
             "if": {
-                "condition": "presence_of_element_located",
+                "condition": "presence",
                 "xpath": "//*[@id=\"su\"]"
             }
         }]
-        cpt.Script(step)
-        cpt.Script(step).
-
+        cpt.Script(step, interval=3)
 
 
 if __name__ == '__main__':
