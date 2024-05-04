@@ -12,7 +12,7 @@ layout:
     visible: true
 ---
 
-# 🐻 Overview
+# 🐻 概述
 
 [![crawlist](https://s2.loli.net/2024/04/19/1T7sZdrjbEfci8W.png)](https://github.com/WwwwwyDev/crawlipt)
 
@@ -31,9 +31,9 @@ layout:
 ### 安装
 
 你可以使用 pip 或者 pip3 来安装本框架\
-`pip install crawlipt` 或者 `pip3 install crawlipt`
+`pip install crawlipt` 或 `pip3 install crawlipt`
 
-### quickly start
+### 快速开始
 
 ```python
 from webdriver_manager.chrome import ChromeDriverManager
@@ -70,8 +70,8 @@ def getDriver(is_headless=False):
 
 if __name__ == '__main__':
     webdriver = getDriver()
-    # Define scripts
-    # You can also deserialize JSON strings into a dictionary
+    # 定义脚本，需要符合脚本规范
+    # 你也可以字典序列化成json字符串
     script = {
         "method": "redirect",
         "url": "https://www.baidu.com/",
@@ -85,6 +85,6 @@ if __name__ == '__main__':
             }
         }
     }
-    # Execute script
+    # 执行脚本，可以直接传入json字符串，会自动解析并执行
     cpt.Script(script, interval=2)(webdriver)
 ```
