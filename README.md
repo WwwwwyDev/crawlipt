@@ -18,20 +18,20 @@ layout:
 
 ## crawlipt
 
-The script for selenium in python
+使用纯字符串脚本驱动selenium
 
 [![pypi](https://img.shields.io/pypi/v/crawlipt) ](https://pypi.python.org/pypi/crawlipt)![python](https://img.shields.io/badge/python-3.10.0+-blue) [![GitHub stars](https://img.shields.io/github/stars/WwwwwyDev/crawlipt)](https://github.com/WwwwwyDev/crawlipt/stargazers)
 
 {% embed url="https://github.com/WwwwwyDev/crawlipt" %}
 
-### introduction
+### 介绍
 
-You can use Crawlipt to driver the selenium by script in python.The script adopts JSON format for better cross language operations and physical storage.
+在python中，你可以使用本框架去驱动selenium的webdriver，脚本使用json格式，以便你更好地跨语言操作以及以文本方式存储在物理介质中。
 
-### installing
+### 安装
 
-You can use pip or pip3 to install the crawlist\
-`pip install crawlipt` or `pip3 install crawlipt`
+你可以使用 pip 或者 pip3 来安装本框架\
+`pip install crawlipt` 或者 `pip3 install crawlipt`
 
 ### quickly start
 
