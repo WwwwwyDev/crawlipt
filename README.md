@@ -30,7 +30,7 @@ You can use Crawlipt to driver the selenium by script in python.The script adopt
 
 ### installing
 
-You can use pip or pip3 to install the crawlist\
+You can use pip or pip3 to install the crawlipt\
 `pip install crawlipt` or `pip3 install crawlipt`
 
 ### quickly start
