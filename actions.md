@@ -8,27 +8,27 @@ description: 本框架包含了一些内置的行为，以便你更好地与网�
 
 所有的脚本方法会自动映射到执行函数，所有的参数都是一一对应的，所有的WebElement元素均通过xpath进行定位。
 
-| 方法             | 参数                                                                                                  | 返回值                                                                                        | 备注                                           |
-| -------------- | --------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ | -------------------------------------------- |
-| click          | xpath : str– Click on the xpath path of the button                                                  | None                                                                                       | 点击某个可点击的按钮                                   |
-| clickMulti     | <p>xpath : str– click on the xpath path of the button</p><p>cnt : str</p>                           | <p>int– click count of the button</p><p>frequency : int– click frequency of the button</p> | 对某个可点击的按钮点击多次                                |
-| clickByJs      | xpath : str– click on the xpath path of the button                                                  | None                                                                                       | 通过js去点击某个按钮，这种方式可以避开遮罩层影响。但在某些禁用外部js的网站可能会失效 |
-| enter          | xpath : str– The xpath path of the input box                                                        | None                                                                                       | 在输入框键入回车                                     |
-| input          | <p>xpath : str– The xpath path of the input box</p><p>text : str– text needs to be passed in</p>    | None                                                                                       | 在输入框输入内容                                     |
-| switchLastTab  | None                                                                                                | None                                                                                       | 切换到最后一个窗口                                    |
-| switchTab      | index : int – The index handle                                                                      | None                                                                                       | 切换到第index个窗口                                 |
-| switchToframe  | xpath : str– The xpath of frame                                                                     | None                                                                                       | 进入到某个frame中                                  |
-| switchOutFrame | None                                                                                                | None                                                                                       | 退出frame                                      |
-| searchRedirect | <p>url : str– Link containing %s</p><p>keyword : str– keyword needs to be passed in</p>             | None                                                                                       | 使用keyword替换链接中的%s进行重定向                       |
-| redirect       | url : str– Links that require redirection                                                           | None                                                                                       | 重定向                                          |
-| redirectNewTab | url :str– Links that require redirection                                                            | None                                                                                       | 重定向到新窗口                                      |
-| selectByText   | <p>xpath : str– the xpath path of the select element</p><p>text : str– the text of selecting</p>    | None                                                                                       | 通过文本对下拉选择器选择                                 |
-| selectByValue  | <p>xpath : str– the xpath path of the select element</p><p>value : str– the value of selecting</p>  | None                                                                                       | 通过值对下拉选择器选择                                  |
-| selectByIndex  | <p>xpath : str– the xpath path of the select element</p><p>index : int – the index of selecting</p> | None                                                                                       | 通过index索引对下拉选择器选择                            |
-| slide          | <p>xpath : str– The element to be slid</p><p>position : list– The x, y position, list([x,y])</p>    | None                                                                                       | 按住某个对象，滑动到相对于这个对象的(x,y)坐标                    |
-| getInnerText   | xpath : str– The xpath path of the element                                                          | str                                                                                        | 获取元素的内部文本，如果元素不可见将获取不到                       |
-| getTextContent | xpath : str– The xpath path of the element                                                          | str                                                                                        | 获取元素的内部文本                                    |
-| getAttribute   | <p>xpath : str– The xpath path of the element</p><p>name : str– The name of the attribute</p>       | str                                                                                        | 获取元素的某个属性                                    |
+| 方法             | 参数                                                   | 返回值  | 备注                                           |
+| -------------- | ---------------------------------------------------- | ---- | -------------------------------------------- |
+| click          | xpath : str                                          | None | 点击某个可点击的按钮                                   |
+| clickMulti     | <p>xpath : str</p><p>cnt : str</p>                   | None | 对某个可点击的按钮点击多次                                |
+| clickByJs      | xpath : str                                          | None | 通过js去点击某个按钮，这种方式可以避开遮罩层影响。但在某些禁用外部js的网站可能会失效 |
+| enter          | xpath : str                                          | None | 在输入框键入回车                                     |
+| input          | <p>xpath : str</p><p>text : str</p>                  | None | 在输入框输入内容                                     |
+| switchLastTab  | None                                                 | None | 切换到最后一个窗口                                    |
+| switchTab      | index : int                                          | None | 切换到第index个窗口                                 |
+| switchToframe  | xpath : str                                          | None | 进入到某个frame中                                  |
+| switchOutFrame | None                                                 | None | 退出frame                                      |
+| searchRedirect | <p>url : str</p><p>keyword : str</p>                 | None | 使用keyword替换链接中的%s进行重定向                       |
+| redirect       | url : str                                            | None | 重定向                                          |
+| redirectNewTab | url : str                                            | None | 重定向到新窗口                                      |
+| selectByText   | <p>xpath : str</p><p>text : str</p>                  | None | 通过文本对下拉选择器选择                                 |
+| selectByValue  | <p>xpath : str</p><p>value : str</p>                 | None | 通过值对下拉选择器选择                                  |
+| selectByIndex  | <p>xpath : str</p><p>index : int</p>                 | None | 通过index索引对下拉选择器选择                            |
+| slide          | <p>xpath : str</p><p>position : list-list([x,y])</p> | None | 按住某个对象，滑动到相对于这个对象的(x,y)坐标                    |
+| getInnerText   | xpath : str                                          | str  | 获取元素的内部文本，如果元素不可见将获取不到                       |
+| getTextContent | xpath : str                                          | str  | 获取元素的内部文本                                    |
+| getAttribute   | <p>xpath : str</p><p>name : str</p>                  | str  | 获取元素的某个属性                                    |
 
 ### 添加你自己的行为
 
