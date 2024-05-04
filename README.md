@@ -18,7 +18,7 @@ layout:
 
 ## crawlipt
 
-使用纯字符串脚本驱动selenium
+使用字符串脚本驱动selenium
 
 [![pypi](https://img.shields.io/pypi/v/crawlipt) ](https://pypi.python.org/pypi/crawlipt)![python](https://img.shields.io/badge/python-3.10.0+-blue) [![GitHub stars](https://img.shields.io/github/stars/WwwwwyDev/crawlipt)](https://github.com/WwwwwyDev/crawlipt/stargazers)
 
