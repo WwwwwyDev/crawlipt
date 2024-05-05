@@ -30,11 +30,11 @@ layout:
 
 ### 安装
 
-你可以使用 pip 或者 pip3 来安装crawlist
+你可以使用 pip 或者 pip3 来安装crawlipt
 
 `pip install crawlipt` 或 `pip3 install crawlipt`
 
-如果你已经安装了crawlist，可能需要更新到最新版本
+如果你已经安装了crawlipt，可能需要更新到最新版本
 
 `pip install --upgrade crawlipt`
 
