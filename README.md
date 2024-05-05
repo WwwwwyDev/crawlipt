@@ -69,9 +69,7 @@ cpt.Script(script, interval=2)(webdriver)
 ## Documenting
 If you are interested and would like to see more detailed documentation, please click on the link below.
 
-[中文文档]: https://wwydev.gitbook.io/crawlipt-zh
-
-
+[中文](https://wwydev.gitbook.io/crawlipt-zh "中文文档")|[English](https://wwydev.gitbook.io/crawlipt "English Document")
 
 ## Contributing
 Please submit pull requests to the develop branch
