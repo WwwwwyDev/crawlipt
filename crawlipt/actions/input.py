@@ -2,12 +2,13 @@ from selenium.webdriver import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from crawlipt.annotation import check
+from crawlipt.annotation import check, alias
 
 
 class Input:
     @staticmethod
     @check(exclude="driver")
+    @alias("I")
     def input(driver: WebDriver, xpath: str, text: str) -> None:
         """
         Handling keyboard input events
@@ -20,6 +21,7 @@ class Input:
 
     @staticmethod
     @check(exclude="driver")
+    @alias("E")
     def enter(driver: WebDriver, xpath: str) -> None:
         """
         Press the enter key once

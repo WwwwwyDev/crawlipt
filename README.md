@@ -67,8 +67,9 @@ cpt.Script(script, interval=2)(webdriver)
 
 
 ## Documenting
-If you are interested and would like to see more detailed documentation, please click on the picture below.\
- <a href="https://wwydev.gitbook.io/crawlipt/"><img src="https://s2.loli.net/2024/04/12/5gOBimSY4oklGys.png" alt="crawlist" style="width:287px; height:123px" ></a>
+If you are interested and would like to see more detailed documentation, please click on the link below.
+
+[中文](https://wwydev.gitbook.io/crawlipt-zh "中文文档")|[English](https://wwydev.gitbook.io/crawlipt "English Document")
 
 ## Contributing
 Please submit pull requests to the develop branch

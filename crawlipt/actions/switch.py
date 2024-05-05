@@ -29,7 +29,7 @@ class Switch:
 
     @staticmethod
     @check(exclude="driver")
-    def switchToframe(driver: WebDriver, xpath: str) -> None:
+    def switchToFrame(driver: WebDriver, xpath: str) -> None:
         """
         Switch to the inner frame
         :param driver: selenium webdriver
