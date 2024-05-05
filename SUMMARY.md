@@ -7,6 +7,6 @@
 * [🐻 Condition](condition.md)
 * [🐻 Judge](judge.md)
 * [🐻 Loop](loop.md)
-* [🐻 annotation](annotation.md)
+* [🐻 Annotation](annotation.md)
 * [🐻‍❄️ 示例](demo.md)
 * [github](https://github.com/WwwwwyDev/crawlipt)
