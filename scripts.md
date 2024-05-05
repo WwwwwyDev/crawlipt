@@ -9,7 +9,7 @@ description: 本章介绍脚本的基本使用。脚本使用json格式定义，
 ```python
 import crawlipt as cpt
 
-# 在编写阶段可以使用json内置字典类型进行编写
+# 在编写阶段可以使用python内置字典类型进行编写
 script = { 
     "method": "redirect",
     "url": "https://www.baidu.com/",
