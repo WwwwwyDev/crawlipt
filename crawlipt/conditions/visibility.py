@@ -24,7 +24,7 @@ class Visibility:
 
     @staticmethod
     @check(exclude="driver")
-    @alias("visibilities")
+    @alias("invisibility")
     def invisibility_of_element_located(driver: WebDriver, xpath: str, wait: float = 1) -> bool:
         """
         An Expectation for checking that an element is either invisible or not present on the DOM.

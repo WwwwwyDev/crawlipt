@@ -201,7 +201,7 @@ class TestCase(unittest.TestCase):
             "xpath": "//*[@id=\"login_form\"]/div[2]/div[2]/div[2]/input",
             "text": "password",
         }, {
-            "method": "captcha",
+            "method": "crackCaptcha",
             "xpath": "//*[@id=\"checkcode2\"]",
         }, {
             "method": "input",
@@ -239,15 +239,35 @@ class TestCase(unittest.TestCase):
 
     def test_loop(self):
         webdriver = get_driver()
+
+        @cpt.check(exclude="driver")
+        def checkNum(driver: WebDriver, xpath: str) -> bool:
+            """
+            your doc
+            :param driver: selenium webdriver
+            :param xpath: the xpath of element
+            """
+            element = driver.find_element(By.XPATH, xpath)
+            value = int(element.get_attribute("value"))
+            if value > 10:
+                return False
+            else:
+                return True
+
+        cpt.Script.add_condition(checkNum)
+
         step = [{
             "method": "redirect",
             "url": "https://www.bchrt.com/tools/click-counter/",
         }, {
             "loop": {
-                "cnt": 5,
+                "while": {
+                    "condition": "checkNum",
+                    "xpath": "//*[@id=\"count\"]"
+                },
                 "script": [{
                     "loop": {
-                        "cnt": 2,
+                        "cnt": 5,
                         "script": {
                             "method": "click",
                             "xpath": "//*[@id=\"addbtn\"]",
@@ -260,13 +280,18 @@ class TestCase(unittest.TestCase):
                     }
                 ]
             }
+        }, {
+            "method": "getAttribute",
+            "xpath": "//*[@id=\"count\"]",
+            "name": "value"
         }]
-        cpt.Script(step)(webdriver)
+        json_str = cpt.Script.generate_json(step)
+        res = cpt.Script(json_str)(webdriver)
+        print(res)
         webdriver.quit()
 
     def test_conditions(self):
-        # webdriver = get_driver()
-        # print(cpt.Script.CONDITIONS)
+        webdriver = get_driver()
         step = [{
             "method": "redirect",
             "url": "https://www.baidu.com/",
@@ -278,6 +303,10 @@ class TestCase(unittest.TestCase):
                 "condition": "presence",
                 "xpath": "//*[@id=\"su\"]"
             }
+        }, {
+            "method": "input",
+            "xpath": "//*[@id=\"kw\"]",
+            "text": "your search text",
         }]
         cpt.Script(step, interval=3)
 

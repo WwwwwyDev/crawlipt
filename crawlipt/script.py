@@ -103,9 +103,15 @@ class ScriptProcess:
             loop_temp: dict = script.get("loop")
             if loop_temp:
                 cnt = loop_temp.get("cnt")
-                if not cnt:
-                    msg = "(Deep %s) loop must set the param of cnt" % (pre_deep + str(current_deep))
+                while_condition = loop_temp.get("while")
+                if not cnt and not while_condition:
+                    msg = "(Deep %s) loop must set the param of cnt or while" % (pre_deep + str(current_deep))
                     raise ScriptError(ParamTypeError(msg), "", pre_deep + str(current_deep))
+                if while_condition:
+                    ScriptProcess.__condition_check(temp_condition=while_condition,
+                                                    name="while",
+                                                    pre_deep=pre_deep,
+                                                    current_deep=current_deep)
                 loop_script = loop_temp.get("script")
                 ScriptProcess.syntax_check(loop_script, pre_deep=pre_deep + str(current_deep) + "->")
                 script = script.get("next")
@@ -176,13 +182,34 @@ class ScriptProcess:
             loop_temp: dict = script.get("loop")
             if loop_temp:
                 cnt = loop_temp.get("cnt")
+                while_condition = loop_temp.get("while")
                 loop_script = loop_temp.get("script")
-                for _ in range(cnt):
-                    ScriptProcess._process_script(script=loop_script,
-                                                  global_script=global_script,
-                                                  webdriver=webdriver,
-                                                  interval=interval,
-                                                  wait=wait)
+                if while_condition and cnt:
+                    while ScriptProcess.__process_condition(temp_condition=while_condition, webdriver=webdriver) and cnt:
+                        ScriptProcess._process_script(script=loop_script,
+                                                      global_script=global_script,
+                                                      webdriver=webdriver,
+                                                      interval=interval,
+                                                      wait=wait)
+                        cnt -= 1
+                    script = script.get("next")
+                    continue
+                if while_condition:
+                    while ScriptProcess.__process_condition(temp_condition=while_condition, webdriver=webdriver):
+                        ScriptProcess._process_script(script=loop_script,
+                                                      global_script=global_script,
+                                                      webdriver=webdriver,
+                                                      interval=interval,
+                                                      wait=wait)
+                    script = script.get("next")
+                    continue
+                if cnt:
+                    for _ in range(cnt):
+                        ScriptProcess._process_script(script=loop_script,
+                                                      global_script=global_script,
+                                                      webdriver=webdriver,
+                                                      interval=interval,
+                                                      wait=wait)
                 script = script.get("next")
                 continue
             check_condition = script.get("check")
@@ -225,12 +252,14 @@ class ScriptProcess:
 
     @staticmethod
     @check
-    def generate(scripts: list | dict) -> dict:
+    def generate(scripts: list | dict | str) -> dict:
         """
         generate the scripts(dict) from list
         """
         if isinstance(scripts, dict):
             return scripts
+        if isinstance(scripts, str):
+            return json.loads(scripts)
         res = {}
         temp = res
         for i in range(len(scripts)):
@@ -298,30 +327,24 @@ class Script(ScriptProcess):
 
     @check
     def __init__(self, script: dict | str | list, global_script: dict | str | list = None, interval: float = 0.5,
-                 wait: float = 10):
+                 wait: float = 10, is_need_syntax_check: bool = True):
         """
         Script Parser
         :param script: Need a str of json or dict or list steps that conforms to syntax conventions
-        :param global_script: This script will be executed before every actions
+        :param b: This script will be executed before every actions
         :param interval: The direct interval between two consecutive scripts
         :param wait: The longest wait time before presence of element located
+        :param is_need_syntax_check: Whether the script need a syntax check
         """
-        if isinstance(script, str):
-            self.script = json.loads(script)
-        elif isinstance(script, list):
-            self.script = ScriptProcess.generate(script)
-        else:
-            self.script = script
+        self.script = ScriptProcess.generate(script)
         if global_script is None:
             self.global_script = {}
-        elif isinstance(global_script, str):
-            self.global_script = json.loads(global_script)
-        elif isinstance(global_script, list):
-            self.global_script = ScriptProcess.generate(global_script)
         else:
-            self.global_script = global_script
-        ScriptProcess.syntax_check(self.script)
-        ScriptProcess.syntax_check(self.global_script)
+            self.global_script = ScriptProcess.generate(global_script)
+        self.is_need_syntax_check = is_need_syntax_check
+        if self.is_need_syntax_check:
+            ScriptProcess.syntax_check(self.script)
+            ScriptProcess.syntax_check(self.global_script)
         assert interval >= 0
         assert wait >= 0
         self.interval = interval
@@ -332,8 +355,9 @@ class Script(ScriptProcess):
         """
         process the script
         """
-        ScriptProcess.syntax_check(self.script)
-        ScriptProcess.syntax_check(self.global_script)
+        if self.is_need_syntax_check:
+            ScriptProcess.syntax_check(self.script)
+            ScriptProcess.syntax_check(self.global_script)
         return ScriptProcess._process_script(script=self.script,
                                              global_script=self.global_script,
                                              webdriver=webdriver,

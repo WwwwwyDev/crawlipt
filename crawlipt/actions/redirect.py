@@ -1,7 +1,7 @@
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.support.wait import WebDriverWait
 
-from crawlipt.annotation import check
+from crawlipt.annotation import check, alias
 
 
 class Redirect:
@@ -19,6 +19,7 @@ class Redirect:
 
     @staticmethod
     @check(exclude="driver")
+    @alias("R")
     def redirect(driver: WebDriver, url: str) -> None:
         """
         Direct redirection

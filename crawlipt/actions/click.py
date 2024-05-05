@@ -4,12 +4,13 @@ import time
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from crawlipt.annotation import check
+from crawlipt.annotation import check, alias
 
 
 class Click:
     @staticmethod
     @check(exclude="driver")
+    @alias("C")
     def click(driver: WebDriver, xpath: str) -> None:
         """
         Handling click events
