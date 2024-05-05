@@ -1,5 +1,5 @@
 ---
-description: 如果前面的行为有一个返回值，则后面的行为可以通过关键词"__PRE_RETURN__"来接收这个返回值，返回方和接收方的类型必须相同。
+description: 如果前面的action有一个返回值，则后面的action可以通过关键词"__PRE_RETURN__"来接收这个返回值，返回方和接收方的类型必须相同。
 ---
 
 # 🐻 Pre-Return
@@ -13,7 +13,7 @@ script = {
 	"next": {
 		"method": "input",
 		"xpath": "//*[@id=\"yDmH0d\"]/div[2]/div[2]/div/input",
-		"text": "__PRE_RETURN__" # text参数的值将是前面行为的返回值
+		"text": "__PRE_RETURN__" # text参数的值将是前面action的返回值
 	}
 }
 ```
@@ -38,7 +38,7 @@ result = cpt.Script(script, interval=0.1)(webdriver) # 你可以使用一个变�
 
 ### 返回值延迟传播
 
-如果某个行为有返回值，下面n个行为返回值均为None，则该行为的返回值，会一直传播到下面n个行为，即下面的n个行为均能接收到该返回值。直到有一个有返回值行为出现，会终止该传播。
+如果某个action有返回值，下面n个action返回值均为None，则该action的返回值，会一直传播到下面n个action，即下面的n个action均能接收到该返回值。直到有一个有返回值action出现，会终止该传播。
 
 ```python
 script = {
