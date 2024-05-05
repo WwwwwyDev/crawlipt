@@ -30,8 +30,12 @@ layout:
 
 ### 安装
 
-你可以使用 pip 或者 pip3 来安装本框架\
+你可以使用 pip 或者 pip3 来安装crawlist\
 `pip install crawlipt` 或 `pip3 install crawlipt`
+
+如果你已经安装了crawlist，可能需要更新到最新版本
+
+`pip install --upgrade crawlipt`
 
 ### 快速开始
 
