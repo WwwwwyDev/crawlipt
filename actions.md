@@ -14,7 +14,7 @@ description: Drive your selenium's webdriver to handle some web page interaction
 | input          | <p>xpath : str– The xpath path of the input box </p><p>text : str– text needs to be passed in</p>                                                                 | None   |
 | switchLastTab  | None                                                                                                                                                              | None   |
 | switchTab      | index : int – The index handle                                                                                                                                    | None   |
-| switchToframe  | xpath : str– The xpath of frame                                                                                                                                   | None   |
+| switchToFrame  | xpath : str– The xpath of frame                                                                                                                                   | None   |
 | switchOutFrame | None                                                                                                                                                              | None   |
 | searchRedirect | <p>url : str– Link containing %s</p><p>keyword : str– keyword needs to be passed in</p>                                                                           | None   |
 | redirect       | url : str– Links that require redirection                                                                                                                         | None   |
