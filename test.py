@@ -10,7 +10,6 @@ from selenium.webdriver.chrome.service import Service
 import crawlipt as cpt
 import ddddocr as docr
 
-
 def get_driver(is_headless=False, is_eager=False):
     option = wd.ChromeOptions()
     arguments = [
