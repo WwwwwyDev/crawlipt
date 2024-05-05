@@ -12,11 +12,11 @@ layout:
     visible: true
 ---
 
-# 🐻‍❄️ Demo
+# 🐻‍❄️ 示例
 
-### Require
+### 需要的依赖
 
-Before you run the demo, you need to install some packages.
+在你测试这些示例前，你需要安装一些依赖包
 
 ```sh
 pip install webdriver-manager
@@ -27,9 +27,9 @@ pip install ddddocr
 
 {% embed url="https://github.com/sml2h3/ddddocr" %}
 
-### Definition of driver
+### 配置selenium的webdriver
 
-Before using the script, you need to define your own webdriver.
+在使用脚本前，你需要配置好自己的webdrvier。
 
 ```python
 import random
@@ -70,9 +70,9 @@ def get_driver(is_headless=False):
     return webdriver
 ```
 
-### demo1
+### 百度搜索示例
 
-Search in baidu
+在百度中搜索“百度贴吧”
 
 ```python
 webdriver = get_driver()
@@ -93,9 +93,9 @@ cpt.Script(script, interval=0.1)(webdriver)
 webdriver.quit()
 ```
 
-### demo2
+### 使用百度翻译进行翻译
 
-Translate using Baidu Translate
+使用百度翻译，并返回翻译结果
 
 ```python
 webdriver = get_driver(is_headless=True)
@@ -116,9 +116,7 @@ print(result)
 webdriver.quit()
 ```
 
-### demo3
-
-Automatic problem-solving
+### 自动做题
 
 ```python
 webdriver = get_driver()
@@ -143,9 +141,7 @@ cpt.Script(scripts, interval=1)(webdriver)
 webdriver.quit()
 ```
 
-### demo4
-
-The application of "\_\_ PRE RETURN\_\_"
+### \_\_ PRE RETURN\_\_的使用
 
 ```python
 webdriver = get_driver()
@@ -171,13 +167,14 @@ cpt.Script(scripts, interval=1)(webdriver)
 webdriver.quit()
 ```
 
-### demo5
+### 破解验证码
 
-Add your own action to crack the verification code
+添加自己的action方法使用ddddocr去破解验证码，并返回破解结果，传递到下一个action方法
 
 ```python
 webdriver = get_driver()
 @cpt.check(exclude="driver")
+@cpt.alias("captcha")
 def crackCaptcha(driver: WebDriver, xpath: str) -> str:
     """
     Handling keyboard input events
@@ -203,7 +200,7 @@ step = [{
     "xpath": "//*[@id=\"login_form\"]/div[2]/div[2]/div[2]/input",
     "text": "password",
 },{
-    "method": "crackCaptcha",
+    "method": "crackCaptcha",  # or alias: "method": "captcha"
     "xpath": "//*[@id=\"checkcode2\"]",
 },{
     "method": "input",
@@ -215,5 +212,89 @@ step = [{
 }]
 scripts = cpt.Script.generate(step)
 cpt.Script(scripts, interval=3)(webdriver)
+webdriver.quit()
+```
+
+### if条件判断
+
+通过if判断是否需要在输入框进行输入
+
+```python
+webdriver = get_driver()
+step = [{
+    "method": "redirect",
+    "url": "https://www.baidu.com/",
+}, {
+    "method": "input",
+    "xpath": "//*[@id=\"kw\"]",
+    "text": "your search text",
+    "if": {
+        "condition": "presence",
+        "xpath": "//*[@id=\"su\"]"
+    }
+}, {
+    "method": "input",
+    "xpath": "//*[@id=\"kw\"]",
+    "text": "your search text",
+}]
+cpt.Script(step, interval=3)
+```
+
+### 计数器多层嵌套循环计算
+
+添加自己的condition方法进行加减计数，并返回最后的结果
+
+```python
+webdriver = get_driver()
+
+@cpt.check(exclude="driver")
+@cpt.alias("check")
+def checkNum(driver: WebDriver, xpath: str) -> bool:
+    """
+    your doc
+    :param driver: selenium webdriver
+    :param xpath: the xpath of element
+    """
+    element = driver.find_element(By.XPATH, xpath)
+    value = int(element.get_attribute("value"))
+    if value > 10:
+        return False
+    else:
+        return True
+
+cpt.Script.add_condition(checkNum)
+
+step = [{
+    "method": "redirect",
+    "url": "https://www.bchrt.com/tools/click-counter/",
+}, {
+    "loop": {
+        "while": {
+            "condition": "checkNum",  # or alias: "condition": "check",
+            "xpath": "//*[@id=\"count\"]"
+        },
+        "script": [{
+            "loop": {
+                "cnt": 5,
+                "script": {
+                    "method": "click",
+                    "xpath": "//*[@id=\"addbtn\"]",
+                },
+            }
+        },
+            {
+                "method": "click",
+                "xpath": "//*[@id=\"subbtn\"]",
+            }
+        ]
+    }
+}, {
+    "method": "getAttribute",
+    "xpath": "//*[@id=\"count\"]",
+    "name": "value"
+}]
+json_str = cpt.Script.generate_json(step)
+res = cpt.Script(json_str)(webdriver)
+print(res)
 webdriver.quit()
 ```
