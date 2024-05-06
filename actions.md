@@ -29,6 +29,10 @@ description: crawlipt包含了一些内置的action，以便你更好地与网�
 | getInnerText   | None | xpath : str                                          | str  | 获取元素的内部文本，如果元素不可见将获取不到                       |
 | getTextContent | None | xpath : str                                          | str  | 获取元素的内部文本                                    |
 | getAttribute   | None | <p>xpath : str</p><p>name : str</p>                  | str  | 获取元素的某个属性                                    |
+| close          | None | None                                                 | None | 关闭当前窗口                                       |
+| back           | None | None                                                 | None | 在浏览器历史记录中后退一步                                |
+| forward        | None | None                                                 | None | 在浏览器历史记录中前进一步                                |
+| clear          | None | None                                                 | None | 清空所有操作状态                                     |
 
 ### 添加你自己的action
 

@@ -8,5 +8,6 @@
 * [🐻 Judge](judge.md)
 * [🐻 Loop](loop.md)
 * [🐻 Annotation](annotation.md)
-* [🐻‍❄️ 示例](demo.md)
+* [🐻 Variable](variable.md)
+* [🐻‍❄️ 完整示例](demo.md)
 * [github](https://github.com/WwwwwyDev/crawlipt)

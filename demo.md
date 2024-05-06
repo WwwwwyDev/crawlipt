@@ -12,7 +12,7 @@ layout:
     visible: true
 ---
 
-# 🐻‍❄️ 示例
+# 🐻‍❄️ 完整示例
 
 ### 需要的依赖
 
@@ -296,5 +296,47 @@ step = [{
 json_str = cpt.Script.generate_json(step)
 res = cpt.Script(json_str)(webdriver)
 print(res)
+webdriver.quit()
+```
+
+### 在百度进行多次搜索
+
+使用变量，进行百度搜索
+
+```python
+webdriver = get_driver()
+step = [{
+    "method": "redirect",
+    "url": "https://www.baidu.com/",
+}, {
+    "method": "input",
+    "xpath": "//*[@id=\"kw\"]",
+    "text": "__v-searchKey__",
+    "if": {
+        "condition": "presence",
+        "xpath": "__v-button_xpath__"
+    }
+}, {
+    "method": "clear"
+}]
+v1 = cpt.Variable({
+    "searchKey": "hello",
+    "button_xpath": "//*[@id=\"su\"]"
+})
+v2 = cpt.Variable({
+    "searchKey": "world",
+    "button_xpath": "//*[@id=\"su\"]"
+})
+v3 = cpt.Variable({
+    "searchKey": "world",
+    "button_xpath": "//*[@id=\"su_no_existence\"]"
+})
+loader = cpt.Script(step, interval=3)
+loader.process(webdriver=webdriver,
+               variable=v1)
+loader.process(webdriver=webdriver,
+               variable=v2)
+loader.process(webdriver=webdriver,
+               variable=v3)
 webdriver.quit()
 ```
