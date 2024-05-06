@@ -331,7 +331,7 @@ class Script(ScriptProcess):
         """
         Script Parser
         :param script: Need a str of json or dict or list steps that conforms to syntax conventions
-        :param b: This script will be executed before every actions
+        :param global_script: This script will be executed before every actions
         :param interval: The direct interval between two consecutive scripts
         :param wait: The longest wait time before presence of element located
         :param is_need_syntax_check: Whether the script need a syntax check
