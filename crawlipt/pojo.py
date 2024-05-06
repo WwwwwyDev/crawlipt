@@ -39,9 +39,3 @@ class Variable(VariableBase):
         return key in self.values
 
 
-class VariableError(Exception):
-    def __init__(self, message):
-        self.message = message
-
-    def __str__(self):
-        return self.message

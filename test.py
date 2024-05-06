@@ -153,7 +153,7 @@ class TestCase(unittest.TestCase):
         webdriver.quit()
 
     def test05(self):
-        webdriver = get_driver()
+        webdriver = get_driver(is_headless=True)
         step = [{
             "method": "redirect",
             "url": "https://www.psy525.cn/ceshi/84307.html",
@@ -172,6 +172,7 @@ class TestCase(unittest.TestCase):
 
     def test06(self):
         webdriver = get_driver()
+
         class A:
             @staticmethod
             @cpt.check(exclude="driver")

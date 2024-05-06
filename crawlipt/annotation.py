@@ -1,13 +1,6 @@
 from inspect import signature
 from functools import wraps
-
-
-class ParamTypeError(Exception):
-    def __init__(self, message):
-        self.message = message
-
-    def __str__(self):
-        return self.message
+from crawlipt.error import ParamTypeError
 
 
 def check(exclude: list | str):
@@ -54,7 +47,8 @@ def check(exclude: list | str):
                     continue
                 if all_kwargs[name] == "__PRE_RETURN__":
                     continue
-                if isinstance(all_kwargs[name], str) and all_kwargs[name].startswith("__v-") and all_kwargs[name].endswith("__"):
+                if isinstance(all_kwargs[name], str) and all_kwargs[name].startswith("__v-") and all_kwargs[
+                    name].endswith("__"):
                     continue
                 if isinstance(all_kwargs[name], int) and type_.annotation is float:
                     all_kwargs[name] = float(all_kwargs.get(name))
