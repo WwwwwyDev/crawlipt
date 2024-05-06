@@ -54,6 +54,8 @@ def check(exclude: list | str):
                     continue
                 if all_kwargs[name] == "__PRE_RETURN__":
                     continue
+                if isinstance(all_kwargs[name], str) and all_kwargs[name].startswith("__v-") and all_kwargs[name].endswith("__"):
+                    continue
                 if isinstance(all_kwargs[name], int) and type_.annotation is float:
                     all_kwargs[name] = float(all_kwargs.get(name))
                 if not isinstance(all_kwargs[name], type_.annotation):
