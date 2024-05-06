@@ -10,6 +10,7 @@ from selenium.webdriver.chrome.service import Service
 import crawlipt as cpt
 import ddddocr as docr
 
+
 def get_driver(is_headless=False, is_eager=False):
     option = wd.ChromeOptions()
     arguments = [
@@ -147,7 +148,7 @@ class TestCase(unittest.TestCase):
             "method": "getInnerText",
             "xpath": "//*[@id=\"trans-selection\"]/div/span",
         }]
-        result = cpt.Script(step, interval=0.1)(webdriver)
+        result = cpt.Script(step, interval=0)(webdriver)
         print(result)
         webdriver.quit()
 
@@ -170,7 +171,7 @@ class TestCase(unittest.TestCase):
         webdriver.quit()
 
     def test06(self):
-        # webdriver = get_driver()
+        webdriver = get_driver()
         class A:
             @staticmethod
             @cpt.check(exclude="driver")
@@ -210,9 +211,9 @@ class TestCase(unittest.TestCase):
             "method": "click",
             "xpath": "//*[@id=\"dosubmit\"]",
         }]
-        result = cpt.Script(step, interval=1)
-        # print(result)
-        # webdriver.quit()
+        result = cpt.Script(step, interval=1)(webdriver)
+        print(result)
+        webdriver.quit()
 
     def test07(self):
         webdriver = get_driver()
@@ -308,6 +309,43 @@ class TestCase(unittest.TestCase):
             "text": "your search text",
         }]
         cpt.Script(step, interval=3)
+
+    def test_variable(self):
+        webdriver = get_driver()
+        step = [{
+            "method": "redirect",
+            "url": "https://www.baidu.com/",
+        }, {
+            "method": "input",
+            "xpath": "//*[@id=\"kw\"]",
+            "text": "__v-searchKey__",
+            "if": {
+                "condition": "presence",
+                "xpath": "__v-button_xpath__"
+            }
+        }, {
+            "method": "clear"
+        }]
+        v1 = cpt.Variable({
+            "searchKey": "hello",
+            "button_xpath": "//*[@id=\"su\"]"
+        })
+        v2 = cpt.Variable({
+            "searchKey": "world",
+            "button_xpath": "//*[@id=\"su\"]"
+        })
+        v3 = cpt.Variable({
+            "searchKey": "world",
+            "button_xpath": "//*[@id=\"su_no_existence\"]"
+        })
+        loader = cpt.Script(step, interval=3)
+        loader.process(webdriver=webdriver,
+                       variable=v1)
+        loader.process(webdriver=webdriver,
+                       variable=v2)
+        loader.process(webdriver=webdriver,
+                       variable=v3)
+        webdriver.quit()
 
 
 if __name__ == '__main__':

@@ -12,6 +12,8 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
 import copy
 
+from crawlipt.pojo import VariableError, VariableBase
+
 
 class ScriptError(Exception):
     def __init__(self, e: Exception, method: str, deep: str):
@@ -33,7 +35,6 @@ class ScriptError(Exception):
             info = "----------------------condition info--------------------------"
         error = "[" + self.e.__class__.__name__ + "] " + self.e.__str__() + "\n"
         return "(Deep:%s method:%s) arguments is wrong\n" % (self.deep, self.method) + error + info + params + doc
-
 
 def dfs_search(obj):
     for parent in obj.__bases__:
@@ -61,7 +62,7 @@ def get_dict(obj):
 class ScriptProcess:
     ACTIONS = get_dict(Action)
     CONDITIONS = get_dict(Condition)
-    __POP_KEY = {"method", "next", "if", "check", "condition"}
+    __POP_KEY = {"method", "next", "if", "check", "condition", "loop"}
 
     @staticmethod
     @check
@@ -113,6 +114,9 @@ class ScriptProcess:
                                                     pre_deep=pre_deep,
                                                     current_deep=current_deep)
                 loop_script = loop_temp.get("script")
+                if not loop_script:
+                    msg = "(Deep %s) loop must set the param of script" % (pre_deep + str(current_deep))
+                    raise ScriptError(ParamTypeError(msg), "", pre_deep + str(current_deep))
                 ScriptProcess.syntax_check(loop_script, pre_deep=pre_deep + str(current_deep) + "->")
                 script = script.get("next")
                 continue
@@ -185,7 +189,8 @@ class ScriptProcess:
                 while_condition = loop_temp.get("while")
                 loop_script = loop_temp.get("script")
                 if while_condition and cnt:
-                    while ScriptProcess.__process_condition(temp_condition=while_condition, webdriver=webdriver) and cnt:
+                    while ScriptProcess.__process_condition(temp_condition=while_condition,
+                                                            webdriver=webdriver) and cnt:
                         ScriptProcess._process_script(script=loop_script,
                                                       global_script=global_script,
                                                       webdriver=webdriver,
@@ -249,6 +254,22 @@ class ScriptProcess:
             script = script.get("next")
             time.sleep(random.uniform(interval / 2, interval))
         return pre_return
+
+    @staticmethod
+    @check
+    def _replace_variable(script: dict, variable: VariableBase) -> None:
+        while script:
+            for key in script.keys():
+                if key not in ScriptProcess.__POP_KEY and isinstance(script[key], str) and script[key].startswith("__v-") and script[key].endswith("__"):
+                    variable_name = script[key][4:-2]
+                    if variable_name not in variable:
+                        msg = f"The {variable_name} is not defined."
+                        raise VariableError(msg)
+                    script[key] = variable.get(variable_name)
+            for key in script.keys():
+                if isinstance(script[key], dict):
+                    ScriptProcess._replace_variable(script=script[key], variable=variable)
+            script = script.get("next")
 
     @staticmethod
     @check
@@ -323,6 +344,8 @@ class ScriptProcess:
             ScriptProcess.CONDITIONS[func.__crawlipt_func_name__] = func_bak
 
 
+
+
 class Script(ScriptProcess):
 
     @check
@@ -331,7 +354,7 @@ class Script(ScriptProcess):
         """
         Script Parser
         :param script: Need a str of json or dict or list steps that conforms to syntax conventions
-        :param b: This script will be executed before every actions
+        :param global_script: This script will be executed before every actions
         :param interval: The direct interval between two consecutive scripts
         :param wait: The longest wait time before presence of element located
         :param is_need_syntax_check: Whether the script need a syntax check
@@ -351,15 +374,23 @@ class Script(ScriptProcess):
         self.wait = wait
 
     @check
-    def process(self, webdriver: WebDriver) -> Any:
+    def process(self, webdriver: WebDriver, variable: VariableBase = None) -> Any:
         """
         process the script
         """
         if self.is_need_syntax_check:
             ScriptProcess.syntax_check(self.script)
             ScriptProcess.syntax_check(self.global_script)
-        return ScriptProcess._process_script(script=self.script,
-                                             global_script=self.global_script,
+        script = copy.deepcopy(self.script)
+        global_script = copy.deepcopy(self.global_script)
+        if variable:
+            ScriptProcess._replace_variable(script, variable)
+            ScriptProcess._replace_variable(global_script, variable)
+            if self.is_need_syntax_check:
+                ScriptProcess.syntax_check(script)
+                ScriptProcess.syntax_check(global_script)
+        return ScriptProcess._process_script(script=script,
+                                             global_script=global_script,
                                              webdriver=webdriver,
                                              interval=self.interval,
                                              wait=self.wait)
