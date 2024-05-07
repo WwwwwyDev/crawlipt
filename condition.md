@@ -23,7 +23,7 @@ from selenium.webdriver.remote.webdriver import WebDriver
 （3）所有的参数必须注明类型，否则无法通过语法检查
 （4）所有参数必须为python的基础类型
 （5）必须注明函数返回值,且返回值类型必须为bool类型
-（6）必须包含(driver: WebDriver)这个参数
+（6）driver是固定变量，即必须包含(driver: WebDriver)这个参数
 """
 @cpt.check(exclude="driver")  
 def myConditon(driver: WebDriver, **args) -> bool:

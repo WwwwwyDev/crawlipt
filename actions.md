@@ -51,7 +51,7 @@ from selenium.webdriver.remote.webdriver import WebDriver
 （3）所有的参数必须注明类型，否则无法通过语法检查
 （4）所有参数必须为python的基础类型
 （5）必须注明函数返回值，如果没有返回值，就返回None(-> None)
-（6）必须包含(driver: WebDriver)这个参数
+（6）driver是固定变量，即必须包含(driver: WebDriver)这个参数
 （7）action方法的参数不能包含if、check、loop等关键词，否则它们不会生效
 """
 @cpt.check(exclude="driver")  
