@@ -36,3 +36,16 @@ class Presence:
         except Exception:
             return False
 
+    @staticmethod
+    @check(exclude="driver")
+    def alert_is_present(driver: WebDriver, wait: float = 1) -> bool:
+        """
+        An expectation for checking whether the given frame is available to switch to.
+        """
+        try:
+            WebDriverWait(driver, wait).until(
+                EC.alert_is_present())
+            return True
+        except Exception:
+            return False
+

@@ -24,7 +24,7 @@ class Util:
     @check(exclude="driver")
     def interval(driver: WebDriver, num: str | int) -> None:
         """
-        log the msg on the console
+        delay num seconds
         :param driver: selenium webdriver
         :param num: the interval number
         """
