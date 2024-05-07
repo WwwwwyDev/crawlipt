@@ -1,5 +1,5 @@
 ---
-description: 存储器贯穿在脚本执行的全过程，帮助你在脚本执行过程中收集存储信息
+description: 存储器贯穿在脚本执行的全过程，帮助你在脚本执行过程中收集和存储信息
 ---
 
 # 🐻 Store
@@ -17,7 +17,7 @@ class MyStore(cpt.StoreBase):
 
 ###  使用Store
 
-Store需要在你自己定义的action或者condition中作为参数传入
+Store需要在你自己定义的[action](actions.md#tian-jia-ni-zi-ji-de-action)或者[condition](condition.md#tian-jia-ni-zi-ji-de-condition)中作为参数传入
 
 ```python
 """
