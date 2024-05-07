@@ -9,7 +9,7 @@ class Slide:
     @check(exclude="driver")
     def slide(driver: WebDriver, xpath: str, position: list) -> None:
         """
-        Handling click events
+        Handling slide events
         :param driver: selenium webdriver
         :param xpath: The element to be slid
         :param position: The x, y position

@@ -9,7 +9,7 @@ class Select:
     @check(exclude="driver")
     def selectByText(driver: WebDriver, xpath: str, text: str) -> None:
         """
-        Handling click events
+        Handling select events
         :param driver: selenium webdriver
         :param xpath: the xpath path of the select element
         :param text: the text of selecting
@@ -21,7 +21,7 @@ class Select:
     @check(exclude="driver")
     def selectByValue(driver: WebDriver, xpath: str, value: str) -> None:
         """
-        Handling click events
+        Handling select events
         :param driver: selenium webdriver
         :param xpath: the xpath path of the select element
         :param value: the value of selecting
@@ -33,7 +33,7 @@ class Select:
     @check(exclude="driver")
     def selectByIndex(driver: WebDriver, xpath: str, index: int) -> None:
         """
-        Handling click events
+        Handling select events
         :param driver: selenium webdriver
         :param xpath: the xpath path of the select element
         :param index: the index of selecting

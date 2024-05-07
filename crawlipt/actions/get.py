@@ -10,7 +10,7 @@ class Get:
     @check(exclude="driver")
     def getInnerText(driver: WebDriver, xpath: str) -> str:
         """
-        Handling keyboard input events
+        get inner text of element
         :param driver: selenium webdriver
         :param xpath: The xpath path of the element
         """
@@ -24,7 +24,7 @@ class Get:
     @check(exclude="driver")
     def getTextContent(driver: WebDriver, xpath: str) -> str:
         """
-        Handling keyboard input events
+        get text content of element
         :param driver: selenium webdriver
         :param xpath: The xpath path of the element
         """
@@ -38,7 +38,7 @@ class Get:
     @check(exclude="driver")
     def getAttribute(driver: WebDriver, xpath: str, name: str) -> str:
         """
-        Handling keyboard input events
+        get the attribute of an element
         :param driver: selenium webdriver
         :param xpath: The xpath path of the element
         :param name: The name of the attribute
@@ -48,3 +48,14 @@ class Get:
         if res is None:
             res = ""
         return res
+
+    @staticmethod
+    @check(exclude="driver")
+    def getAlertText(driver: WebDriver) -> str:
+        """
+        get the text of the alert
+        :param driver: selenium webdriver
+        """
+        alert = driver.switch_to.alert
+        return alert.text
+
