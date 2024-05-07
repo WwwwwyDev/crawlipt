@@ -44,7 +44,7 @@ loader.process(webdriver=webdriver,
 
 ### 实现你自己的variable对象
 
-你需要继承VariableBase对象，并且实现get、set、\_\_contains\_\_ 这三个方法
+你需要继承VariableBase对象，并且实现get、\_\_contains\_\_ 这两个方法
 
 ```python
 import crawlipt as cpt
@@ -58,10 +58,6 @@ class Variable(cpt.VariableBase):
     @cpt.check
     def get(self, key: str) -> Any:
         return self.values.get(key)
-
-    @cpt.check(exclude="value")
-    def set(self, key: str, value: Any):
-        self.values[key] = value
 
     @cpt.check
     def __contains__(self, key: str):
