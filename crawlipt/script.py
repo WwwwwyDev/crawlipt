@@ -321,6 +321,9 @@ class ScriptProcess:
             raise ParamTypeError("func must be a callable")
         if "driver" not in signature(func).parameters:
             raise ParamTypeError("func must have a 'driver' parameter")
+        if "driver" in signature(func).parameters:
+            if not issubclass(signature(func).parameters["driver"].annotation, WebDriver):
+                raise ParamTypeError("the 'driver' parameter must be a subclass of WebDriver")
         if "store" in signature(func).parameters:
             if not issubclass(signature(func).parameters["store"].annotation, StoreBase):
                 raise ParamTypeError("the 'store' parameter must be a subclass of StoreBase")
@@ -344,6 +347,9 @@ class ScriptProcess:
             raise ParamTypeError("func must be a callable")
         if "driver" not in signature(func).parameters:
             raise ParamTypeError("func must have a 'driver' parameter")
+        if "driver" in signature(func).parameters:
+            if not issubclass(signature(func).parameters["driver"].annotation, WebDriver):
+                raise ParamTypeError("the 'driver' parameter must be a subclass of WebDriver")
         if "store" in signature(func).parameters:
             if not issubclass(signature(func).parameters["store"].annotation, StoreBase):
                 raise ParamTypeError("the 'store' parameter must be a subclass of StoreBase")

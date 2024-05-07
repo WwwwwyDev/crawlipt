@@ -2,20 +2,20 @@ import random
 import time
 
 from selenium.webdriver import ActionChains, Keys
-from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 
 from crawlipt.annotation import check
 
+js_code = '''he = setInterval(() => {
+                    document.documentElement.scrollTop += document.documentElement.scrollHeight
+                    if (document.documentElement.scrollTop >= (document.documentElement.scrollHeight - document.documentElement.scrollWidth)) {
+                        clearInterval(he)
+                    }
+                },100)
+            '''
+
 
 class Scroll:
-    js_code = '''he = setInterval(() => {
-                        document.documentElement.scrollTop += document.documentElement.scrollHeight
-                        if (document.documentElement.scrollTop >= (document.documentElement.scrollHeight - document.documentElement.scrollWidth)) {
-                            clearInterval(he)
-                        }
-                    },100)
-                '''
 
     @staticmethod
     @check(exclude="driver")
@@ -24,7 +24,7 @@ class Scroll:
         Handling scroll events by Js
         :param driver: selenium webdriver
         """
-        driver.execute_script(Scroll.js_code)
+        driver.execute_script(js_code)
 
     @staticmethod
     @check(exclude="driver")
