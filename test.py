@@ -8,6 +8,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 from selenium import webdriver as wd
 from selenium.webdriver.chrome.service import Service
 import crawlipt as cpt
+import crawlist as cl
 import ddddocr as docr
 
 
@@ -153,7 +154,7 @@ class TestCase(unittest.TestCase):
         webdriver.quit()
 
     def test05(self):
-        webdriver = get_driver()
+        webdriver = get_driver(is_headless=True)
         step = [{
             "method": "redirect",
             "url": "https://www.psy525.cn/ceshi/84307.html",
@@ -172,6 +173,7 @@ class TestCase(unittest.TestCase):
 
     def test06(self):
         webdriver = get_driver()
+
         class A:
             @staticmethod
             @cpt.check(exclude="driver")
@@ -345,6 +347,63 @@ class TestCase(unittest.TestCase):
                        variable=v2)
         loader.process(webdriver=webdriver,
                        variable=v3)
+        webdriver.quit()
+
+    def test_store(self):
+
+        class MyStore(cpt.StoreBase):
+            def __init__(self):
+                self.data = []
+
+        class MyPager(cl.DynamicNumButtonPager):
+            def pre_load(self, webdriver: WebDriver) -> None:
+                pass
+
+        @cpt.check(exclude=["driver", "store"])
+        def crawl_baidu_list(driver: WebDriver, store: MyStore, limit: int) -> None:
+            if not driver:
+                return None
+            pager = MyPager(uri="https://www.baidu.com/",
+                            button_selector=cl.XpathWebElementSelector('//*[@id="page"]/div/a/span'),
+                            webdriver=driver, interval=2)
+            selector = cl.CssSelector(pattern="#content_left > div")
+            analyzer = cl.AnalyzerPrettify(pager, selector)
+            for e in analyzer(limit):
+                store.data.append(e)
+
+        cpt.Script.add_action(crawl_baidu_list)
+        webdriver = get_driver(is_headless=True)
+        step = [{
+            "method": "redirect",
+            "url": "https://www.baidu.com/",
+        }, {
+            "method": "input",
+            "xpath": "//*[@id=\"kw\"]",
+            "text": "__v-keyword__",
+        }, {
+            "method": "click",
+            "xpath": "//*[@id=\"su\"]"
+        }, {
+            "method": "crawl_baidu_list",
+            "limit": "__v-limit__",
+        },{
+            "method": "clear"
+        }]
+        v1 = cpt.Variable({
+            "limit": 20,
+            "keyword": "和泉雾纱"
+        })
+        store1 = MyStore()
+        v2 = cpt.Variable({
+            "limit": 20,
+            "keyword": "python"
+        })
+        store2 = MyStore()
+        loader = cpt.Script(step, interval=1)
+        loader.process(webdriver=webdriver, store=store1, variable=v1)
+        print(store1.data)
+        loader.process(webdriver=webdriver, store=store2, variable=v2)
+        print(store2.data)
         webdriver.quit()
 
 

@@ -11,11 +11,11 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
 import copy
+from crawlipt.error import VariableError
+from crawlipt.pojo import VariableBase, StoreBase
 
-from crawlipt.pojo import VariableError, VariableBase
 
-
-class ScriptError(Exception):
+class ScriptSyntaxError(Exception):
     def __init__(self, e: Exception, method: str, deep: str):
         self.e = e
         self.method = method
@@ -35,6 +35,7 @@ class ScriptError(Exception):
             info = "----------------------condition info--------------------------"
         error = "[" + self.e.__class__.__name__ + "] " + self.e.__str__() + "\n"
         return "(Deep:%s method:%s) arguments is wrong\n" % (self.deep, self.method) + error + info + params + doc
+
 
 def dfs_search(obj):
     for parent in obj.__bases__:
@@ -71,21 +72,21 @@ class ScriptProcess:
         temp_args = {"driver": None}
         if not condition:
             msg = "(Deep %s) condition of '%s' is missing" % (pre_deep + str(current_deep), name)
-            raise ScriptError(ParamTypeError(msg), "", pre_deep + str(current_deep))
+            raise ScriptSyntaxError(ParamTypeError(msg), "", pre_deep + str(current_deep))
         if condition not in ScriptProcess.CONDITIONS.keys():
             msg = "(Deep %s) Could not found condition of '%s'" % (pre_deep + str(current_deep), name)
-            raise ScriptError(ParamTypeError(msg), condition, pre_deep + str(current_deep))
+            raise ScriptSyntaxError(ParamTypeError(msg), condition, pre_deep + str(current_deep))
         for key, value in temp_condition.items():
             if key.lower() not in ScriptProcess.__POP_KEY:
                 temp_args[key] = value
         try:
             ScriptProcess.CONDITIONS[condition](**temp_args)
         except TypeError as e:
-            raise ScriptError(e, condition, pre_deep + str(current_deep))
+            raise ScriptSyntaxError(e, condition, pre_deep + str(current_deep))
         except AssertionError as e:
-            raise ScriptError(e, condition, pre_deep + str(current_deep))
+            raise ScriptSyntaxError(e, condition, pre_deep + str(current_deep))
         except ParamTypeError as e:
-            raise ScriptError(e, condition, pre_deep + str(current_deep))
+            raise ScriptSyntaxError(e, condition, pre_deep + str(current_deep))
         except Exception:
             pass
 
@@ -107,7 +108,7 @@ class ScriptProcess:
                 while_condition = loop_temp.get("while")
                 if not cnt and not while_condition:
                     msg = "(Deep %s) loop must set the param of cnt or while" % (pre_deep + str(current_deep))
-                    raise ScriptError(ParamTypeError(msg), "", pre_deep + str(current_deep))
+                    raise ScriptSyntaxError(ParamTypeError(msg), "", pre_deep + str(current_deep))
                 if while_condition:
                     ScriptProcess.__condition_check(temp_condition=while_condition,
                                                     name="while",
@@ -116,7 +117,7 @@ class ScriptProcess:
                 loop_script = loop_temp.get("script")
                 if not loop_script:
                     msg = "(Deep %s) loop must set the param of script" % (pre_deep + str(current_deep))
-                    raise ScriptError(ParamTypeError(msg), "", pre_deep + str(current_deep))
+                    raise ScriptSyntaxError(ParamTypeError(msg), "", pre_deep + str(current_deep))
                 ScriptProcess.syntax_check(loop_script, pre_deep=pre_deep + str(current_deep) + "->")
                 script = script.get("next")
                 continue
@@ -136,30 +137,32 @@ class ScriptProcess:
             method = script.get("method")
             if not method:
                 msg = "(Deep %s) Method is missing" % (pre_deep + str(current_deep))
-                raise ScriptError(ParamTypeError(msg), "", pre_deep + str(current_deep))
+                raise ScriptSyntaxError(ParamTypeError(msg), "", pre_deep + str(current_deep))
             if method not in ScriptProcess.ACTIONS.keys():
                 msg = "(Deep %s) Could not found Method" % (pre_deep + str(current_deep))
-                raise ScriptError(ParamTypeError(msg), method, pre_deep + str(current_deep))
+                raise ScriptSyntaxError(ParamTypeError(msg), method, pre_deep + str(current_deep))
             for key, value in script.items():
                 if key.lower() not in ScriptProcess.__POP_KEY:
                     temp_args[key] = value
+            if "store" in signature(ScriptProcess.ACTIONS[method]).parameters:
+                temp_args["store"] = None
             if pre_return is not None:
                 for key, value in temp_args.items():
                     if value == "__PRE_RETURN__":
                         annotation = signature(ScriptProcess.ACTIONS[method]).parameters[key].annotation
                         if pre_return != annotation:
                             msg = f"The pre-return is {pre_return}, But parameter {key} is {annotation}."
-                            raise ScriptError(ParamTypeError(msg), method, pre_deep + str(current_deep))
+                            raise ScriptSyntaxError(ParamTypeError(msg), method, pre_deep + str(current_deep))
             try:
                 if signature(ScriptProcess.ACTIONS[method]).return_annotation is not None:
                     pre_return = signature(ScriptProcess.ACTIONS[method]).return_annotation
                 ScriptProcess.ACTIONS[method](**temp_args)
             except TypeError as e:
-                raise ScriptError(e, method, pre_deep + str(current_deep))
+                raise ScriptSyntaxError(e, method, pre_deep + str(current_deep))
             except AssertionError as e:
-                raise ScriptError(e, method, pre_deep + str(current_deep))
+                raise ScriptSyntaxError(e, method, pre_deep + str(current_deep))
             except ParamTypeError as e:
-                raise ScriptError(e, method, pre_deep + str(current_deep))
+                raise ScriptSyntaxError(e, method, pre_deep + str(current_deep))
             except Exception:
                 pass
             script = script.get("next")
@@ -176,7 +179,8 @@ class ScriptProcess:
 
     @staticmethod
     @check
-    def _process_script(script: dict, global_script: dict, webdriver: WebDriver, interval: float, wait: float) -> Any:
+    def _process_script(script: dict, global_script: dict, webdriver: WebDriver, store: StoreBase = None,
+                        interval: float = 0.5, wait: float = 10):
         """
         process the script
         """
@@ -194,6 +198,7 @@ class ScriptProcess:
                         ScriptProcess._process_script(script=loop_script,
                                                       global_script=global_script,
                                                       webdriver=webdriver,
+                                                      store=store,
                                                       interval=interval,
                                                       wait=wait)
                         cnt -= 1
@@ -204,6 +209,7 @@ class ScriptProcess:
                         ScriptProcess._process_script(script=loop_script,
                                                       global_script=global_script,
                                                       webdriver=webdriver,
+                                                      store=store,
                                                       interval=interval,
                                                       wait=wait)
                     script = script.get("next")
@@ -213,6 +219,7 @@ class ScriptProcess:
                         ScriptProcess._process_script(script=loop_script,
                                                       global_script=global_script,
                                                       webdriver=webdriver,
+                                                      store=store,
                                                       interval=interval,
                                                       wait=wait)
                 script = script.get("next")
@@ -235,6 +242,8 @@ class ScriptProcess:
             for key, value in script.items():
                 if key.lower() not in ScriptProcess.__POP_KEY:
                     temp_args[key] = value
+            if "store" in signature(ScriptProcess.ACTIONS[method]).parameters:
+                temp_args["store"] = store
             if pre_return is not None:
                 for key, value in temp_args.items():
                     if value == "__PRE_RETURN__":
@@ -246,6 +255,7 @@ class ScriptProcess:
                 ScriptProcess._process_script(script=global_script,
                                               global_script={},
                                               webdriver=webdriver,
+                                              store=store,
                                               interval=interval,
                                               wait=wait)
             current_return = Script.ACTIONS[method](**temp_args)
@@ -260,7 +270,8 @@ class ScriptProcess:
     def _replace_variable(script: dict, variable: VariableBase) -> None:
         while script:
             for key in script.keys():
-                if key not in ScriptProcess.__POP_KEY and isinstance(script[key], str) and script[key].startswith("__v-") and script[key].endswith("__"):
+                if key not in ScriptProcess.__POP_KEY and isinstance(script[key], str) and script[key].startswith(
+                        "__v-") and script[key].endswith("__"):
                     variable_name = script[key][4:-2]
                     if variable_name not in variable:
                         msg = f"The {variable_name} is not defined."
@@ -310,6 +321,12 @@ class ScriptProcess:
             raise ParamTypeError("func must be a callable")
         if "driver" not in signature(func).parameters:
             raise ParamTypeError("func must have a 'driver' parameter")
+        if "driver" in signature(func).parameters:
+            if not issubclass(signature(func).parameters["driver"].annotation, WebDriver):
+                raise ParamTypeError("the 'driver' parameter must be a subclass of WebDriver")
+        if "store" in signature(func).parameters:
+            if not issubclass(signature(func).parameters["store"].annotation, StoreBase):
+                raise ParamTypeError("the 'store' parameter must be a subclass of StoreBase")
         if signature(func).parameters["driver"].annotation is not WebDriver:
             raise ParamTypeError("the 'driver' parameter must be a WebDriver of selenium.")
         ScriptProcess.ACTIONS[func.__name__] = func
@@ -330,6 +347,12 @@ class ScriptProcess:
             raise ParamTypeError("func must be a callable")
         if "driver" not in signature(func).parameters:
             raise ParamTypeError("func must have a 'driver' parameter")
+        if "driver" in signature(func).parameters:
+            if not issubclass(signature(func).parameters["driver"].annotation, WebDriver):
+                raise ParamTypeError("the 'driver' parameter must be a subclass of WebDriver")
+        if "store" in signature(func).parameters:
+            if not issubclass(signature(func).parameters["store"].annotation, StoreBase):
+                raise ParamTypeError("the 'store' parameter must be a subclass of StoreBase")
         if signature(func).parameters["driver"].annotation is not WebDriver:
             raise ParamTypeError("the 'driver' parameter must be a WebDriver of selenium.")
         if signature(func).return_annotation is not bool:
@@ -342,8 +365,6 @@ class ScriptProcess:
             pass
         if "__crawlipt_func_name__" in func.__dict__:
             ScriptProcess.CONDITIONS[func.__crawlipt_func_name__] = func_bak
-
-
 
 
 class Script(ScriptProcess):
@@ -374,7 +395,7 @@ class Script(ScriptProcess):
         self.wait = wait
 
     @check
-    def process(self, webdriver: WebDriver, variable: VariableBase = None) -> Any:
+    def process(self, webdriver: WebDriver, variable: VariableBase = None, store: StoreBase = None) -> Any:
         """
         process the script
         """
@@ -392,6 +413,7 @@ class Script(ScriptProcess):
         return ScriptProcess._process_script(script=script,
                                              global_script=global_script,
                                              webdriver=webdriver,
+                                             store=store,
                                              interval=self.interval,
                                              wait=self.wait)
 
