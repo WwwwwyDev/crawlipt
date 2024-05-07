@@ -12,6 +12,10 @@ description: crawlipt包含了一些内置的condition，以便你在与网页�
 
 ### 添加你自己的condition
 
+在你添加自己的action方法前，建议你先学习一下selenium的基本使用
+
+{% embed url="https://www.selenium.dev/" %}
+
 请参考下面的示例
 
 ```python
