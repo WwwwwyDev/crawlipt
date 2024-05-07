@@ -12,7 +12,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
 import copy
 from crawlipt.error import VariableError
-from crawlipt.pojo import VariableBase
+from crawlipt.pojo import VariableBase, StoreBase
 
 
 class ScriptSyntaxError(Exception):
@@ -144,6 +144,8 @@ class ScriptProcess:
             for key, value in script.items():
                 if key.lower() not in ScriptProcess.__POP_KEY:
                     temp_args[key] = value
+            if "store" in signature(ScriptProcess.ACTIONS[method]).parameters:
+                temp_args["store"] = None
             if pre_return is not None:
                 for key, value in temp_args.items():
                     if value == "__PRE_RETURN__":
@@ -177,7 +179,8 @@ class ScriptProcess:
 
     @staticmethod
     @check
-    def _process_script(script: dict, global_script: dict, webdriver: WebDriver, interval: float, wait: float) -> Any:
+    def _process_script(script: dict, global_script: dict, webdriver: WebDriver, store: StoreBase = None,
+                        interval: float = 0.5, wait: float = 10):
         """
         process the script
         """
@@ -195,6 +198,7 @@ class ScriptProcess:
                         ScriptProcess._process_script(script=loop_script,
                                                       global_script=global_script,
                                                       webdriver=webdriver,
+                                                      store=store,
                                                       interval=interval,
                                                       wait=wait)
                         cnt -= 1
@@ -205,6 +209,7 @@ class ScriptProcess:
                         ScriptProcess._process_script(script=loop_script,
                                                       global_script=global_script,
                                                       webdriver=webdriver,
+                                                      store=store,
                                                       interval=interval,
                                                       wait=wait)
                     script = script.get("next")
@@ -214,6 +219,7 @@ class ScriptProcess:
                         ScriptProcess._process_script(script=loop_script,
                                                       global_script=global_script,
                                                       webdriver=webdriver,
+                                                      store=store,
                                                       interval=interval,
                                                       wait=wait)
                 script = script.get("next")
@@ -236,6 +242,8 @@ class ScriptProcess:
             for key, value in script.items():
                 if key.lower() not in ScriptProcess.__POP_KEY:
                     temp_args[key] = value
+            if "store" in signature(ScriptProcess.ACTIONS[method]).parameters:
+                temp_args["store"] = store
             if pre_return is not None:
                 for key, value in temp_args.items():
                     if value == "__PRE_RETURN__":
@@ -247,6 +255,7 @@ class ScriptProcess:
                 ScriptProcess._process_script(script=global_script,
                                               global_script={},
                                               webdriver=webdriver,
+                                              store=store,
                                               interval=interval,
                                               wait=wait)
             current_return = Script.ACTIONS[method](**temp_args)
@@ -312,6 +321,9 @@ class ScriptProcess:
             raise ParamTypeError("func must be a callable")
         if "driver" not in signature(func).parameters:
             raise ParamTypeError("func must have a 'driver' parameter")
+        if "store" in signature(func).parameters:
+            if not issubclass(signature(func).parameters["store"].annotation, StoreBase):
+                raise ParamTypeError("the 'store' parameter must be a subclass of StoreBase")
         if signature(func).parameters["driver"].annotation is not WebDriver:
             raise ParamTypeError("the 'driver' parameter must be a WebDriver of selenium.")
         ScriptProcess.ACTIONS[func.__name__] = func
@@ -332,6 +344,9 @@ class ScriptProcess:
             raise ParamTypeError("func must be a callable")
         if "driver" not in signature(func).parameters:
             raise ParamTypeError("func must have a 'driver' parameter")
+        if "store" in signature(func).parameters:
+            if not issubclass(signature(func).parameters["store"].annotation, StoreBase):
+                raise ParamTypeError("the 'store' parameter must be a subclass of StoreBase")
         if signature(func).parameters["driver"].annotation is not WebDriver:
             raise ParamTypeError("the 'driver' parameter must be a WebDriver of selenium.")
         if signature(func).return_annotation is not bool:
@@ -374,7 +389,7 @@ class Script(ScriptProcess):
         self.wait = wait
 
     @check
-    def process(self, webdriver: WebDriver, variable: VariableBase = None) -> Any:
+    def process(self, webdriver: WebDriver, variable: VariableBase = None, store: StoreBase = None) -> Any:
         """
         process the script
         """
@@ -392,6 +407,7 @@ class Script(ScriptProcess):
         return ScriptProcess._process_script(script=script,
                                              global_script=global_script,
                                              webdriver=webdriver,
+                                             store=store,
                                              interval=self.interval,
                                              wait=self.wait)
 

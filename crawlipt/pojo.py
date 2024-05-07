@@ -5,14 +5,14 @@ from crawlipt.annotation import check
 
 
 class VariableBase:
+    """
+    This is a interface class for the variable.
+    """
 
     @check
     def get(self, key: str) -> Any:
         raise NotImplementedError
 
-    @check(exclude="value")
-    def set(self, key: str, value: Any) -> Any:
-        raise NotImplementedError
 
     @check
     def __contains__(self, key: str):
@@ -30,12 +30,13 @@ class Variable(VariableBase):
     def get(self, key: str) -> Any:
         return self.values.get(key)
 
-    @check(exclude="value")
-    def set(self, key: str, value: Any):
-        self.values[key] = value
 
     @check
     def __contains__(self, key: str):
         return key in self.values
 
 
+class StoreBase:
+    """
+    This is a interface class for the store.
+    """
