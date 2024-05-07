@@ -401,8 +401,8 @@ class TestCase(unittest.TestCase):
         store2 = MyStore()
         loader = cpt.Script(step, interval=1)
         loader.process(webdriver=webdriver, store=store1, variable=v1)
-        loader.process(webdriver=webdriver, store=store2, variable=v2)
         print(store1.data)
+        loader.process(webdriver=webdriver, store=store2, variable=v2)
         print(store2.data)
         webdriver.quit()
 
