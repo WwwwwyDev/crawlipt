@@ -33,7 +33,7 @@ You can use pip or pip3 to install the crawlipt
 
 `pip install crawlipt` or `pip3 install crawlipt`
 
-If you have already installed crawlelip, you may need to update to the latest version
+If you have already installed crawlipt, you may need to update to the latest version
 
 `pip install --upgrade crawlipt`
 
