@@ -21,11 +21,14 @@ layout:
 ```sh
 pip install webdriver-manager
 pip install ddddocr
+pip install --upgrade crawlist
 ```
 
 {% embed url="https://github.com/SergeyPirogov/webdriver_manager" %}
 
 {% embed url="https://github.com/sml2h3/ddddocr" %}
+
+{% embed url="https://github.com/WwwwwyDev/crawlist" %}
 
 ### 配置selenium的webdriver
 
@@ -40,6 +43,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 from selenium import webdriver as wd
 from selenium.webdriver.chrome.service import Service
 import crawlipt as cpt
+import crawlist as cl
 import ddddocr as docr
 
 def get_driver(is_headless=False):
@@ -338,5 +342,66 @@ loader.process(webdriver=webdriver,
                variable=v2)
 loader.process(webdriver=webdriver,
                variable=v3)
+webdriver.quit()
+```
+
+### 利用store爬取网页列表信息
+
+使用crawlist爬取网页列表信息，并存储在store中
+
+```python
+class MyStore(cpt.StoreBase):
+    def __init__(self):
+        self.data = []
+
+class MyPager(cl.DynamicNumButtonPager):
+    def pre_load(self, webdriver: WebDriver) -> None:
+        pass
+
+@cpt.check(exclude=["driver", "store"])
+def crawl_baidu_list(driver: WebDriver, store: MyStore, limit: int) -> None:
+    if not driver:
+        return None
+    pager = MyPager(uri="https://www.baidu.com/",
+                    button_selector=cl.XpathWebElementSelector('//*[@id="page"]/div/a/span'),
+                    webdriver=driver, interval=2)
+    selector = cl.CssSelector(pattern="#content_left > div")
+    analyzer = cl.AnalyzerPrettify(pager, selector)
+    for e in analyzer(limit):
+        store.data.append(e)
+
+cpt.Script.add_action(crawl_baidu_list)
+webdriver = get_driver(is_headless=True)
+step = [{
+    "method": "redirect",
+    "url": "https://www.baidu.com/",
+}, {
+    "method": "input",
+    "xpath": "//*[@id=\"kw\"]",
+    "text": "__v-keyword__",
+}, {
+    "method": "click",
+    "xpath": "//*[@id=\"su\"]"
+}, {
+    "method": "crawl_baidu_list",
+    "limit": "__v-limit__",
+},{
+    "method": "clear"
+}]
+v1 = cpt.Variable({
+    "limit": 20,
+    "keyword": "和泉雾纱"
+})
+store1 = MyStore()
+v2 = cpt.Variable({
+    "limit": 20,
+    "keyword": "python"
+})
+store2 = MyStore()
+loader = cpt.Script(step, interval=1)
+loader.process(webdriver=webdriver, store=store1, variable=v1)
+print(store1.data)
+loader.process(webdriver=webdriver, store=store2, variable=v2)
+print(store2.data)
 webdriver.quit()
 ```

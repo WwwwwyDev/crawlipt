@@ -26,6 +26,8 @@ description: crawlipt包含了一些内置的action，以便你更好地与网�
 | selectByValue  | None | <p>xpath : str</p><p>value : str</p>                 | None | 通过值对下拉选择器选择                                  |
 | selectByIndex  | None | <p>xpath : str</p><p>index : int</p>                 | None | 通过index索引对下拉选择器选择                            |
 | slide          | None | <p>xpath : str</p><p>position : list-list([x,y])</p> | None | 按住某个对象，滑动到相对于这个对象的(x,y)坐标                    |
+| scrollByJs     | None | None                                                 | None | 通过执行js代码来实现滚动                                |
+| scrollBySpace  | None | <p>cnt: str | int, </p><p>frequency: int = 0.1</p>   | None | 使用按空格按键来实现滚动                                 |
 | getInnerText   | None | xpath : str                                          | str  | 获取元素的内部文本，如果元素不可见将获取不到                       |
 | getTextContent | None | xpath : str                                          | str  | 获取元素的内部文本                                    |
 | getAttribute   | None | <p>xpath : str</p><p>name : str</p>                  | str  | 获取元素的某个属性                                    |
@@ -33,6 +35,8 @@ description: crawlipt包含了一些内置的action，以便你更好地与网�
 | back           | None | None                                                 | None | 在浏览器历史记录中后退一步                                |
 | forward        | None | None                                                 | None | 在浏览器历史记录中前进一步                                |
 | clear          | None | None                                                 | None | 清空所有操作状态                                     |
+| log            | None | msg: str                                             | None | 在终端打印msg信息                                   |
+| interval       | None | num: str \| int                                      | None | 显式等待num秒时间                                   |
 
 ### 添加你自己的action
 

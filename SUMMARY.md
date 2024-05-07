@@ -9,5 +9,6 @@
 * [🐻 Loop](loop.md)
 * [🐻 Annotation](annotation.md)
 * [🐻 Variable](variable.md)
+* [🐻 Store](store.md)
 * [🐻‍❄️ 完整示例](demo.md)
 * [github](https://github.com/WwwwwyDev/crawlipt)
