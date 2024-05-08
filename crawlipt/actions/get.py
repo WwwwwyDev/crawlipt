@@ -49,13 +49,4 @@ class Get:
             res = ""
         return res
 
-    @staticmethod
-    @check(exclude="driver")
-    def getAlertText(driver: WebDriver) -> str:
-        """
-        get the text of the alert
-        :param driver: selenium webdriver
-        """
-        alert = driver.switch_to.alert
-        return alert.text
 
