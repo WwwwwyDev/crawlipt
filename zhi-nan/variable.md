@@ -2,7 +2,7 @@
 description: 变量可以增强脚本的灵活性以及扩展性，可以动态控制脚本的运行
 ---
 
-# 🐻 Variable
+# Variable
 
 ### 脚本示例
 

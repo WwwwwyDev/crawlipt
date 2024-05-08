@@ -2,7 +2,7 @@
 description: crawlipt包含了一些内置的action，以便你更好地与网页进行交互。同时你也可以添加自己的action方法，进行扩展。
 ---
 
-# 🐻 Action
+# Action
 
 ### 内置的action方法
 

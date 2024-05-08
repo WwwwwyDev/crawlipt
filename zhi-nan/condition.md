@@ -2,7 +2,7 @@
 description: crawlipt包含了一些内置的condition，以便你在与网页进行交互可以进行一些逻辑判断。同时你也可以添加自己的condition方法，进行扩展。
 ---
 
-# 🐻 Condition
+# Condition
 
 ### 内置的condition方法
 

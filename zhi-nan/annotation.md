@@ -2,7 +2,7 @@
 description: crawlipt提供了check和alias两个装饰器来控制action以及condition方法
 ---
 
-# 🐻 annotation
+# Annotation
 
 ### check 装饰器
 

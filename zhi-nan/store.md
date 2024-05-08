@@ -2,7 +2,7 @@
 description: 存储器贯穿在脚本执行的全过程，帮助你在脚本执行过程中收集和存储信息
 ---
 
-# 🐻 Store
+# Store
 
 ### 实现Store
 

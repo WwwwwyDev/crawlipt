@@ -12,7 +12,7 @@ layout:
     visible: true
 ---
 
-# 🐻 概述
+# 概述
 
 [![crawlist](https://s2.loli.net/2024/04/19/1T7sZdrjbEfci8W.png)](https://github.com/WwwwwyDev/crawlipt)
 

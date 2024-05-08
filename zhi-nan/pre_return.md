@@ -2,7 +2,7 @@
 description: 如果前面的action有一个返回值，则后面的action可以通过关键词"__PRE_RETURN__"来接收这个返回值，返回方和接收方的类型必须相同。
 ---
 
-# 🐻 Pre-Return
+# Pre-Return
 
 ### 在脚本中的返回值
 

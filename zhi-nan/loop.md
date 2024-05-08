@@ -2,7 +2,7 @@
 description: crawlipt提供了loop关键词来进行循环
 ---
 
-# 🐻 Loop
+# Loop
 
 ### loop关键词
 
