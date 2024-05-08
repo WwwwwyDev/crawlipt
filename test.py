@@ -401,6 +401,5 @@ class TestCase(unittest.TestCase):
         print(store2.data)
         webdriver.quit()
 
-
 if __name__ == '__main__':
     unittest.main()

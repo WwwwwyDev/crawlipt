@@ -13,7 +13,7 @@ class Click:
     @alias("C")
     def click(driver: WebDriver, xpath: str) -> None:
         """
-        Handling click events
+        Handling click events of first element
         :param driver: selenium webdriver
         :param xpath: click on the xpath path of the button
         """
@@ -24,7 +24,7 @@ class Click:
     @check(exclude="driver")
     def clickMulti(driver: WebDriver, xpath: str, cnt: str | int, frequency: int = 0.1) -> None:
         """
-        Handling click events multiple times
+        Handling click events of first element multiple times
         :param driver: selenium webdriver
         :param xpath: click on the xpath path of the button
         :param cnt: click count of the button
@@ -36,16 +36,39 @@ class Click:
         while cnt:
             cnt -= 1
             element.click()
-            time.sleep(random.uniform(frequency/2, frequency))
+            time.sleep(random.uniform(frequency / 2, frequency))
 
     @staticmethod
     @check(exclude="driver")
     def clickByJs(driver: WebDriver, xpath: str) -> None:
         """
-        Handling click events by js 'arguments[0].click();'
+        Handling click events of first element by js 'arguments[0].click();'
         :param driver: selenium webdriver
         :param xpath: click on the xpath path of the button
         """
         element = driver.find_element(By.XPATH, xpath)
         driver.execute_script("arguments[0].click();", element)
 
+    @staticmethod
+    @check(exclude="driver")
+    def clickAll(driver: WebDriver, xpath: str) -> None:
+        """
+        Handling click events of all element
+        :param driver: selenium webdriver
+        :param xpath: click on the xpath path of the button
+        """
+        elements = driver.find_elements(By.XPATH, xpath)
+        for element in elements:
+            element.click()
+
+    @staticmethod
+    @check(exclude="driver")
+    def clickAllByJs(driver: WebDriver, xpath: str) -> None:
+        """
+        Handling click events of all element by js 'arguments[0].click();'
+        :param driver: selenium webdriver
+        :param xpath: click on the xpath path of the button
+        """
+        elements = driver.find_elements(By.XPATH, xpath)
+        for element in elements:
+            driver.execute_script("arguments[0].click();", element)
