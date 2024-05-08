@@ -63,11 +63,11 @@ def get_dict(obj):
 class ScriptProcess:
     ACTIONS = get_dict(Action)
     CONDITIONS = get_dict(Condition)
-    __POP_KEY = {"method", "next", "if", "check", "condition", "loop"}
+    __POP_KEY = {"method", "next", "if", "check", "condition", "loop", "return_flag"}
 
     @staticmethod
     @check
-    def __condition_check(temp_condition: dict, name: str, pre_deep: str, current_deep: int) -> None:
+    def __condition_check(temp_condition: dict, name: str, pre_deep: str, current_deep: int, return_record: dict) -> None:
         condition = temp_condition.get("condition")
         temp_args = {"driver": None}
         if not condition:
@@ -79,6 +79,17 @@ class ScriptProcess:
         for key, value in temp_condition.items():
             if key.lower() not in ScriptProcess.__POP_KEY:
                 temp_args[key] = value
+        if return_record:
+            for key, value in temp_args.items():
+                if isinstance(value, str) and value.startswith("__rf-") and value.endswith("__"):
+                    if value[5:-2] not in return_record.keys():
+                        msg = f"The return_flag:{value[5:-2]} cannot be find in history record."
+                        raise ScriptSyntaxError(ParamTypeError(msg), condition, pre_deep + str(current_deep))
+                    annotation = signature(ScriptProcess.CONDITIONS[condition]).parameters[key].annotation
+                    pre_return_flag = return_record[value[5:-2]]
+                    if pre_return_flag != annotation:
+                        msg = f"The return_flag is {pre_return_flag}, But parameter {key} is {annotation}."
+                        raise ScriptSyntaxError(ParamTypeError(msg), condition, pre_deep + str(current_deep))
         try:
             ScriptProcess.CONDITIONS[condition](**temp_args)
         except TypeError as e:
@@ -92,7 +103,7 @@ class ScriptProcess:
 
     @staticmethod
     @check
-    def syntax_check(script: dict | str, pre_deep: str = "") -> None:
+    def syntax_check(script: dict | str, pre_deep: str = "", return_record: dict = {}) -> None:
         """
         Script syntax check
         """
@@ -112,25 +123,30 @@ class ScriptProcess:
                 if while_condition:
                     ScriptProcess.__condition_check(temp_condition=while_condition,
                                                     name="while",
+                                                    return_record=return_record,
                                                     pre_deep=pre_deep,
                                                     current_deep=current_deep)
                 loop_script = loop_temp.get("script")
                 if not loop_script:
                     msg = "(Deep %s) loop must set the param of script" % (pre_deep + str(current_deep))
                     raise ScriptSyntaxError(ParamTypeError(msg), "", pre_deep + str(current_deep))
-                ScriptProcess.syntax_check(loop_script, pre_deep=pre_deep + str(current_deep) + "->")
+                ScriptProcess.syntax_check(script=loop_script,
+                                           pre_deep=pre_deep + str(current_deep) + "->",
+                                           return_record=return_record)
                 script = script.get("next")
                 continue
             check_condition = script.get("check")
             if check_condition:
                 ScriptProcess.__condition_check(temp_condition=check_condition,
                                                 name="check",
+                                                return_record=return_record,
                                                 pre_deep=pre_deep,
                                                 current_deep=current_deep)
             if_condition = script.get("if")
             if if_condition:
                 ScriptProcess.__condition_check(temp_condition=if_condition,
                                                 name="if",
+                                                return_record=return_record,
                                                 pre_deep=pre_deep,
                                                 current_deep=current_deep)
             temp_args = {"driver": None}
@@ -140,6 +156,10 @@ class ScriptProcess:
                 raise ScriptSyntaxError(ParamTypeError(msg), "", pre_deep + str(current_deep))
             if method not in ScriptProcess.ACTIONS.keys():
                 msg = "(Deep %s) Could not found Method" % (pre_deep + str(current_deep))
+                raise ScriptSyntaxError(ParamTypeError(msg), method, pre_deep + str(current_deep))
+            return_flag = script.get("return_flag")
+            if return_flag and not isinstance(return_flag, str):
+                msg = "(Deep %s) return_flag must be the type of str" % (pre_deep + str(current_deep))
                 raise ScriptSyntaxError(ParamTypeError(msg), method, pre_deep + str(current_deep))
             for key, value in script.items():
                 if key.lower() not in ScriptProcess.__POP_KEY:
@@ -153,9 +173,22 @@ class ScriptProcess:
                         if pre_return != annotation:
                             msg = f"The pre-return is {pre_return}, But parameter {key} is {annotation}."
                             raise ScriptSyntaxError(ParamTypeError(msg), method, pre_deep + str(current_deep))
+            if return_record:
+                for key, value in temp_args.items():
+                    if isinstance(value, str) and value.startswith("__rf-") and value.endswith("__"):
+                        if value[5:-2] not in return_record.keys():
+                            msg = f"The return_flag:{value[5:-2]} cannot be find in history record."
+                            raise ScriptSyntaxError(ParamTypeError(msg), method, pre_deep + str(current_deep))
+                        annotation = signature(ScriptProcess.ACTIONS[method]).parameters[key].annotation
+                        pre_return_flag = return_record[value[5:-2]]
+                        if pre_return_flag != annotation:
+                            msg = f"The return_flag is {pre_return_flag}, But parameter {key} is {annotation}."
+                            raise ScriptSyntaxError(ParamTypeError(msg), method, pre_deep + str(current_deep))
             try:
                 if signature(ScriptProcess.ACTIONS[method]).return_annotation is not None:
                     pre_return = signature(ScriptProcess.ACTIONS[method]).return_annotation
+                if return_flag:
+                    return_record[return_flag] = signature(ScriptProcess.ACTIONS[method]).return_annotation
                 ScriptProcess.ACTIONS[method](**temp_args)
             except TypeError as e:
                 raise ScriptSyntaxError(e, method, pre_deep + str(current_deep))
@@ -169,18 +202,22 @@ class ScriptProcess:
 
     @staticmethod
     @check
-    def __process_condition(temp_condition: dict, webdriver: WebDriver) -> bool:
+    def __process_condition(temp_condition: dict, webdriver: WebDriver, return_record: dict) -> bool:
         condition = temp_condition.get("condition")
         temp_args = {"driver": webdriver}
         for key, value in temp_condition.items():
             if key.lower() not in ScriptProcess.__POP_KEY:
                 temp_args[key] = value
+        if return_record:
+            for key, value in temp_args.items():
+                if isinstance(value, str) and value.startswith("__rf-") and value.endswith("__"):
+                    temp_args[key] = return_record[value[5:-2]]
         return ScriptProcess.CONDITIONS[condition](**temp_args)
 
     @staticmethod
     @check
     def _process_script(script: dict, global_script: dict, webdriver: WebDriver, store: StoreBase = None,
-                        interval: float = 0.5, wait: float = 10):
+                        return_record: dict = {}, interval: float = 0.5, wait: float = 10):
         """
         process the script
         """
@@ -194,10 +231,12 @@ class ScriptProcess:
                 loop_script = loop_temp.get("script")
                 if while_condition and cnt:
                     while ScriptProcess.__process_condition(temp_condition=while_condition,
+                                                            return_record=return_record,
                                                             webdriver=webdriver) and cnt:
                         ScriptProcess._process_script(script=loop_script,
                                                       global_script=global_script,
                                                       webdriver=webdriver,
+                                                      return_record=return_record,
                                                       store=store,
                                                       interval=interval,
                                                       wait=wait)
@@ -205,10 +244,13 @@ class ScriptProcess:
                     script = script.get("next")
                     continue
                 if while_condition:
-                    while ScriptProcess.__process_condition(temp_condition=while_condition, webdriver=webdriver):
+                    while ScriptProcess.__process_condition(temp_condition=while_condition,
+                                                            return_record=return_record,
+                                                            webdriver=webdriver):
                         ScriptProcess._process_script(script=loop_script,
                                                       global_script=global_script,
                                                       webdriver=webdriver,
+                                                      return_record=return_record,
                                                       store=store,
                                                       interval=interval,
                                                       wait=wait)
@@ -219,6 +261,7 @@ class ScriptProcess:
                         ScriptProcess._process_script(script=loop_script,
                                                       global_script=global_script,
                                                       webdriver=webdriver,
+                                                      return_record=return_record,
                                                       store=store,
                                                       interval=interval,
                                                       wait=wait)
@@ -227,12 +270,14 @@ class ScriptProcess:
             check_condition = script.get("check")
             if check_condition:
                 is_success = ScriptProcess.__process_condition(temp_condition=check_condition,
+                                                               return_record=return_record,
                                                                webdriver=webdriver)
                 if not is_success:
                     return
             if_condition = script.get("if")
             if if_condition:
                 is_success = ScriptProcess.__process_condition(temp_condition=if_condition,
+                                                               return_record=return_record,
                                                                webdriver=webdriver)
                 if not is_success:
                     script = script.get("next")
@@ -248,6 +293,10 @@ class ScriptProcess:
                 for key, value in temp_args.items():
                     if value == "__PRE_RETURN__":
                         temp_args[key] = pre_return
+            if return_record:
+                for key, value in temp_args.items():
+                    if isinstance(value, str) and value.startswith("__rf-") and value.endswith("__"):
+                        temp_args[key] = return_record[value[5:-2]]
             if "driver" in temp_args and "xpath" in temp_args:
                 WebDriverWait(temp_args["driver"], wait).until(
                     EC.presence_of_element_located((By.XPATH, temp_args["xpath"])))
@@ -259,6 +308,9 @@ class ScriptProcess:
                                               interval=interval,
                                               wait=wait)
             current_return = Script.ACTIONS[method](**temp_args)
+            return_flag = script.get("return_flag")
+            if return_flag:
+                return_record[return_flag] = current_return
             if current_return is not None:
                 pre_return = current_return
             script = script.get("next")
@@ -278,7 +330,7 @@ class ScriptProcess:
                         raise VariableError(msg)
                     script[key] = variable.get(variable_name)
             for key in script.keys():
-                if isinstance(script[key], dict):
+                if key in {"loop", "if", "check", "while", "script"}:
                     ScriptProcess._replace_variable(script=script[key], variable=variable)
             script = script.get("next")
 
@@ -301,6 +353,8 @@ class ScriptProcess:
                     loop_temp["script"] = ScriptProcess.generate(loop_temp["script"])
             temp.update(scripts[i])
             if i != len(scripts) - 1:
+                while temp.get("next"):
+                    temp = temp.get("next")
                 temp["next"] = {}
                 temp = temp["next"]
         return res
@@ -329,6 +383,9 @@ class ScriptProcess:
                 raise ParamTypeError("the 'store' parameter must be a subclass of StoreBase")
         if signature(func).parameters["driver"].annotation is not WebDriver:
             raise ParamTypeError("the 'driver' parameter must be a WebDriver of selenium.")
+        for name in signature(func).parameters.keys():
+            if name in ScriptProcess.__POP_KEY:
+                raise ParamTypeError(f"the parameter name: {name} conflicts with the keyword")
         ScriptProcess.ACTIONS[func.__name__] = func
         func_bak = func
         try:
@@ -357,6 +414,9 @@ class ScriptProcess:
             raise ParamTypeError("the 'driver' parameter must be a WebDriver of selenium.")
         if signature(func).return_annotation is not bool:
             raise ParamTypeError("the return of func must be the type of bool.")
+        for name in signature(func).parameters.keys():
+            if name in ScriptProcess.__POP_KEY:
+                raise ParamTypeError(f"the parameter name: {name} conflicts with the keyword")
         ScriptProcess.CONDITIONS[func.__name__] = func
         func_bak = func
         try:

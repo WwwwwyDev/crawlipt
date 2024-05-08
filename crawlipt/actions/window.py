@@ -1,5 +1,3 @@
-from selenium.common import NoSuchWindowException
-from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 
 from crawlipt.annotation import check, alias
@@ -8,6 +6,7 @@ from crawlipt.annotation import check, alias
 class Window:
     @staticmethod
     @check(exclude="driver")
+    @alias("window.clear")
     def clear(driver: WebDriver) -> None:
         """
         close all windows
@@ -19,6 +18,7 @@ class Window:
 
     @staticmethod
     @check(exclude="driver")
+    @alias("window.back")
     def back(driver: WebDriver) -> None:
         """
         Goes one step backward in the browser history.
@@ -28,7 +28,8 @@ class Window:
 
     @staticmethod
     @check(exclude="driver")
-    def forword(driver: WebDriver) -> None:
+    @alias("window.forward")
+    def forward(driver: WebDriver) -> None:
         """
         Goes one step forward in the browser history.
         :param driver: selenium webdriver
@@ -37,9 +38,20 @@ class Window:
 
     @staticmethod
     @check(exclude="driver")
+    @alias("window.close")
     def close(driver: WebDriver) -> None:
         """
         Closes the current window.
         :param driver: selenium webdriver
         """
         driver.close()
+
+    @staticmethod
+    @check(exclude="driver")
+    @alias("window.url")
+    def url(driver: WebDriver) -> str:
+        """
+        return the current url
+        :param driver: selenium webdriver
+        """
+        return driver.current_url
