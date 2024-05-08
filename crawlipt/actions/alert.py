@@ -16,11 +16,12 @@ class Alert:
         """
         assert operation == "dismiss" or operation == "accept"
         alert = driver.switch_to.alert
+        alert_text = alert.text
         if text:
             alert.send_keys(text)
         if operation == "dismiss":
             alert.dismiss()
         else:
             alert.accept()
-        return alert.text
+        return alert_text
 
