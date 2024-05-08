@@ -7,7 +7,7 @@ from crawlipt.annotation import check, alias
 class Alert:
     @staticmethod
     @check(exclude="driver")
-    def alert(driver: WebDriver, operation: str, text: str = "") -> None:
+    def alert(driver: WebDriver, operation: str, text: str = "") -> str:
         """
         Handling alert events
         :param driver: selenium webdriver
@@ -22,3 +22,5 @@ class Alert:
             alert.dismiss()
         else:
             alert.accept()
+        return alert.text
+

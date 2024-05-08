@@ -355,17 +355,12 @@ class TestCase(unittest.TestCase):
             def __init__(self):
                 self.data = []
 
-        class MyPager(cl.DynamicNumButtonPager):
-            def pre_load(self, webdriver: WebDriver) -> None:
-                pass
-
         @cpt.check(exclude=["driver", "store"])
         def crawl_baidu_list(driver: WebDriver, store: MyStore, limit: int) -> None:
             if not driver:
                 return None
-            pager = MyPager(uri="https://www.baidu.com/",
-                            button_selector=cl.XpathWebElementSelector('//*[@id="page"]/div/a/span'),
-                            webdriver=driver, interval=2)
+            pager = cl.DynamicNumButtonPager(button_selector=cl.XpathWebElementSelector('//*[@id="page"]/div/a/span'),
+                                             webdriver=driver, interval=2)
             selector = cl.CssSelector(pattern="#content_left > div")
             analyzer = cl.AnalyzerPrettify(pager, selector)
             for e in analyzer(limit):
