@@ -65,7 +65,7 @@ def get_dict(obj):
 class ScriptProcess:
     ACTIONS = get_dict(Action)
     CONDITIONS = get_dict(Condition)
-    __POP_KEY = {"method", "next", "if", "check", "condition", "loop", "return_flag"}
+    __POP_KEY = {"method", "next", "if", "check", "condition", "loop", "return_flag", "while"}
 
     @staticmethod
     @check
