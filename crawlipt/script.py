@@ -76,7 +76,7 @@ class ScriptProcess:
             msg = "(Deep %s) condition of '%s' is missing" % (pre_deep + str(current_deep), name)
             raise ScriptSyntaxError(ParamTypeError(msg), "", pre_deep + str(current_deep))
         if condition not in ScriptProcess.CONDITIONS.keys():
-            msg = "(Deep %s) Could not found condition of '%s'" % (pre_deep + str(current_deep), name)
+            msg = "(Deep %s) Could not found the Condition Method in '%s'" % (pre_deep + str(current_deep), name)
             raise ScriptSyntaxError(ParamTypeError(msg), condition, pre_deep + str(current_deep))
         return_flag = temp_condition.get("return_flag")
         if return_flag and not isinstance(return_flag, str):
@@ -163,7 +163,7 @@ class ScriptProcess:
                 msg = "(Deep %s) Method is missing" % (pre_deep + str(current_deep))
                 raise ScriptSyntaxError(ParamTypeError(msg), "", pre_deep + str(current_deep))
             if method not in ScriptProcess.ACTIONS.keys():
-                msg = "(Deep %s) Could not found Method" % (pre_deep + str(current_deep))
+                msg = "(Deep %s) Could not found the Action Method" % (pre_deep + str(current_deep))
                 raise ScriptSyntaxError(ParamTypeError(msg), method, pre_deep + str(current_deep))
             return_flag = script.get("return_flag")
             if return_flag and not isinstance(return_flag, str):

@@ -6,24 +6,19 @@ from selenium.webdriver.remote.webdriver import WebDriver
 
 from crawlipt.annotation import check
 
-js_code = '''he = setInterval(() => {
-                    document.documentElement.scrollTop += document.documentElement.scrollHeight
-                    if (document.documentElement.scrollTop >= (document.documentElement.scrollHeight - document.documentElement.scrollWidth)) {
-                        clearInterval(he)
-                    }
-                },100)
-            '''
-
 
 class Scroll:
 
     @staticmethod
     @check(exclude="driver")
-    def scrollByJs(driver: WebDriver) -> None:
+    def scrollByJs(driver: WebDriver, height: str | int) -> None:
         """
         Handling scroll events by Js
         :param driver: selenium webdriver
+        :param height: scroll height
         """
+        height = str(height)
+        js_code = "document.documentElement.scrollTop += %s" % height
         driver.execute_script(js_code)
 
     @staticmethod
@@ -43,3 +38,19 @@ class Scroll:
         for _ in range(cnt):
             actions.send_keys(Keys.SPACE).perform()
             time.sleep(random.uniform(frequency / 2, frequency))
+
+    @staticmethod
+    @check(exclude="driver")
+    def scrollToBottom(driver: WebDriver) -> None:
+        """
+        Handling scroll to bottom events by Js
+        :param driver: selenium webdriver
+        """
+        js_code = '''he = setInterval(() => {
+                            document.documentElement.scrollTop += document.documentElement.scrollHeight
+                            if (document.documentElement.scrollTop >= (document.documentElement.scrollHeight - document.documentElement.scrollWidth)) {
+                                clearInterval(he)
+                            }
+                        },100)
+                    '''
+        driver.execute_script(js_code)
