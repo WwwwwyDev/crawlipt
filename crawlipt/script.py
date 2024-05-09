@@ -34,6 +34,8 @@ class ScriptSyntaxError(Exception):
             doc = ScriptProcess.CONDITIONS[self.method].__doc__
             info = "----------------------condition info--------------------------"
         error = "[" + self.e.__class__.__name__ + "] " + self.e.__str__() + "\n"
+        if not doc:
+            doc = ""
         return "(Deep:%s method:%s) arguments is wrong\n" % (self.deep, self.method) + error + info + params + doc
 
 
@@ -76,6 +78,10 @@ class ScriptProcess:
         if condition not in ScriptProcess.CONDITIONS.keys():
             msg = "(Deep %s) Could not found condition of '%s'" % (pre_deep + str(current_deep), name)
             raise ScriptSyntaxError(ParamTypeError(msg), condition, pre_deep + str(current_deep))
+        return_flag = temp_condition.get("return_flag")
+        if return_flag and not isinstance(return_flag, str):
+            msg = "(Deep %s) return_flag must be the type of str" % (pre_deep + str(current_deep))
+            raise ScriptSyntaxError(ParamTypeError(msg), condition, pre_deep + str(current_deep))
         for key, value in temp_condition.items():
             if key.lower() not in ScriptProcess.__POP_KEY:
                 temp_args[key] = value
@@ -91,6 +97,8 @@ class ScriptProcess:
                         msg = f"The return_flag is {pre_return_flag}, But parameter {key} is {annotation}."
                         raise ScriptSyntaxError(ParamTypeError(msg), condition, pre_deep + str(current_deep))
         try:
+            if return_flag:
+                return_record[return_flag] = signature(ScriptProcess.CONDITIONS[condition]).return_annotation
             ScriptProcess.CONDITIONS[condition](**temp_args)
         except TypeError as e:
             raise ScriptSyntaxError(e, condition, pre_deep + str(current_deep))
@@ -204,6 +212,7 @@ class ScriptProcess:
     @check
     def __process_condition(temp_condition: dict, webdriver: WebDriver, return_record: dict) -> bool:
         condition = temp_condition.get("condition")
+        return_flag = temp_condition.get("return_flag")
         temp_args = {"driver": webdriver}
         for key, value in temp_condition.items():
             if key.lower() not in ScriptProcess.__POP_KEY:
@@ -212,7 +221,10 @@ class ScriptProcess:
             for key, value in temp_args.items():
                 if isinstance(value, str) and value.startswith("__rf-") and value.endswith("__"):
                     temp_args[key] = return_record[value[5:-2]]
-        return ScriptProcess.CONDITIONS[condition](**temp_args)
+        is_success = ScriptProcess.CONDITIONS[condition](**temp_args)
+        if return_flag:
+            return_record[return_flag] = is_success
+        return is_success
 
     @staticmethod
     @check
@@ -299,7 +311,10 @@ class ScriptProcess:
                         temp_args[key] = return_record[value[5:-2]]
             if "driver" in temp_args and "xpath" in temp_args:
                 WebDriverWait(temp_args["driver"], wait).until(
-                    EC.presence_of_element_located((By.XPATH, temp_args["xpath"])))
+                    EC.presence_of_all_elements_located((By.XPATH, temp_args["xpath"])))
+            if "driver" in temp_args and "css" in temp_args:
+                WebDriverWait(temp_args["driver"], wait).until(
+                    EC.presence_of_all_elements_located((By.CSS_SELECTOR, temp_args["css"])))
             if global_script:
                 ScriptProcess._process_script(script=global_script,
                                               global_script={},
@@ -386,7 +401,8 @@ class ScriptProcess:
         for name in signature(func).parameters.keys():
             if name in ScriptProcess.__POP_KEY:
                 raise ParamTypeError(f"the parameter name: {name} conflicts with the keyword")
-        ScriptProcess.ACTIONS[func.__name__] = func
+        if func.__name__ not in ScriptProcess.ACTIONS:
+            ScriptProcess.ACTIONS[func.__name__] = func
         func_bak = func
         try:
             func = func.__func__
@@ -417,7 +433,8 @@ class ScriptProcess:
         for name in signature(func).parameters.keys():
             if name in ScriptProcess.__POP_KEY:
                 raise ParamTypeError(f"the parameter name: {name} conflicts with the keyword")
-        ScriptProcess.CONDITIONS[func.__name__] = func
+        if func.__name__ not in ScriptProcess.CONDITIONS:
+            ScriptProcess.CONDITIONS[func.__name__] = func
         func_bak = func
         try:
             func = func.__func__
@@ -453,12 +470,14 @@ class Script(ScriptProcess):
         assert wait >= 0
         self.interval = interval
         self.wait = wait
+        self.return_record = {}
 
     @check
     def process(self, webdriver: WebDriver, variable: VariableBase = None, store: StoreBase = None) -> Any:
         """
         process the script
         """
+        self.return_record.clear()
         if self.is_need_syntax_check:
             ScriptProcess.syntax_check(self.script)
             ScriptProcess.syntax_check(self.global_script)
@@ -473,6 +492,7 @@ class Script(ScriptProcess):
         return ScriptProcess._process_script(script=script,
                                              global_script=global_script,
                                              webdriver=webdriver,
+                                             return_record=self.return_record,
                                              store=store,
                                              interval=self.interval,
                                              wait=self.wait)
