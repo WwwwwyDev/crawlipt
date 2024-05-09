@@ -65,7 +65,7 @@ def get_dict(obj):
 class ScriptProcess:
     ACTIONS = get_dict(Action)
     CONDITIONS = get_dict(Condition)
-    __POP_KEY = {"method", "next", "if", "check", "condition", "loop", "return_flag", "while"}
+    __POP_KEY = {"method", "next", "if", "check", "condition", "loop", "return_flag", "while", "fail_script"}
 
     @staticmethod
     @check
@@ -78,6 +78,11 @@ class ScriptProcess:
         if condition not in ScriptProcess.CONDITIONS.keys():
             msg = "(Deep %s) Could not found the Condition Method in '%s'" % (pre_deep + str(current_deep), name)
             raise ScriptSyntaxError(ParamTypeError(msg), condition, pre_deep + str(current_deep))
+        fail_script = temp_condition.get("fail_script")
+        if fail_script:
+            ScriptProcess.syntax_check(script=fail_script,
+                                       pre_deep=pre_deep + str(current_deep) + "->",
+                                       return_record=return_record)
         return_flag = temp_condition.get("return_flag")
         if return_flag and not isinstance(return_flag, str):
             msg = "(Deep %s) return_flag must be the type of str" % (pre_deep + str(current_deep))
@@ -85,6 +90,8 @@ class ScriptProcess:
         for key, value in temp_condition.items():
             if key.lower() not in ScriptProcess.__POP_KEY:
                 temp_args[key] = value
+        if "store" in signature(ScriptProcess.CONDITIONS[condition]).parameters:
+            temp_args["store"] = None
         if return_record:
             for key, value in temp_args.items():
                 if isinstance(value, str) and value.startswith("__rf-") and value.endswith("__"):
@@ -141,8 +148,6 @@ class ScriptProcess:
                 ScriptProcess.syntax_check(script=loop_script,
                                            pre_deep=pre_deep + str(current_deep) + "->",
                                            return_record=return_record)
-                script = script.get("next")
-                continue
             check_condition = script.get("check")
             if check_condition:
                 ScriptProcess.__condition_check(temp_condition=check_condition,
@@ -152,6 +157,9 @@ class ScriptProcess:
                                                 current_deep=current_deep)
             if_condition = script.get("if")
             if if_condition:
+                if not script.get("method"):
+                    msg = "(Deep %s) The 'if' condition must be with a Action Method" % (pre_deep + str(current_deep))
+                    raise ScriptSyntaxError(ParamTypeError(msg), "", pre_deep + str(current_deep))
                 ScriptProcess.__condition_check(temp_condition=if_condition,
                                                 name="if",
                                                 return_record=return_record,
@@ -160,8 +168,8 @@ class ScriptProcess:
             temp_args = {"driver": None}
             method = script.get("method")
             if not method:
-                msg = "(Deep %s) Method is missing" % (pre_deep + str(current_deep))
-                raise ScriptSyntaxError(ParamTypeError(msg), "", pre_deep + str(current_deep))
+                script = script.get("next")
+                continue
             if method not in ScriptProcess.ACTIONS.keys():
                 msg = "(Deep %s) Could not found the Action Method" % (pre_deep + str(current_deep))
                 raise ScriptSyntaxError(ParamTypeError(msg), method, pre_deep + str(current_deep))
@@ -210,13 +218,16 @@ class ScriptProcess:
 
     @staticmethod
     @check
-    def __process_condition(temp_condition: dict, webdriver: WebDriver, return_record: dict) -> bool:
+    def __process_condition(temp_condition: dict, webdriver: WebDriver, return_record: dict,
+                            global_script: dict,  interval: float, wait: float, store: StoreBase = None) -> bool:
         condition = temp_condition.get("condition")
         return_flag = temp_condition.get("return_flag")
         temp_args = {"driver": webdriver}
         for key, value in temp_condition.items():
             if key.lower() not in ScriptProcess.__POP_KEY:
                 temp_args[key] = value
+        if "store" in signature(ScriptProcess.CONDITIONS[condition]).parameters:
+            temp_args["store"] = store
         if return_record:
             for key, value in temp_args.items():
                 if isinstance(value, str) and value.startswith("__rf-") and value.endswith("__"):
@@ -224,6 +235,15 @@ class ScriptProcess:
         is_success = ScriptProcess.CONDITIONS[condition](**temp_args)
         if return_flag:
             return_record[return_flag] = is_success
+        if not is_success:
+            fail_script = temp_condition.get("fail_script")
+            if fail_script:
+                ScriptProcess._process_script(script=fail_script,
+                                              global_script=global_script,
+                                              webdriver=webdriver,
+                                              interval=interval,
+                                              wait=wait,
+                                              store=store,)
         return is_success
 
     @staticmethod
@@ -244,7 +264,11 @@ class ScriptProcess:
                 if while_condition and cnt:
                     while ScriptProcess.__process_condition(temp_condition=while_condition,
                                                             return_record=return_record,
-                                                            webdriver=webdriver) and cnt:
+                                                            global_script=global_script,
+                                                            webdriver=webdriver,
+                                                            store=store,
+                                                            interval=interval,
+                                                            wait=wait) and cnt:
                         ScriptProcess._process_script(script=loop_script,
                                                       global_script=global_script,
                                                       webdriver=webdriver,
@@ -253,12 +277,14 @@ class ScriptProcess:
                                                       interval=interval,
                                                       wait=wait)
                         cnt -= 1
-                    script = script.get("next")
-                    continue
                 if while_condition:
                     while ScriptProcess.__process_condition(temp_condition=while_condition,
                                                             return_record=return_record,
-                                                            webdriver=webdriver):
+                                                            global_script=global_script,
+                                                            webdriver=webdriver,
+                                                            store=store,
+                                                            interval=interval,
+                                                            wait=wait):
                         ScriptProcess._process_script(script=loop_script,
                                                       global_script=global_script,
                                                       webdriver=webdriver,
@@ -266,8 +292,6 @@ class ScriptProcess:
                                                       store=store,
                                                       interval=interval,
                                                       wait=wait)
-                    script = script.get("next")
-                    continue
                 if cnt:
                     for _ in range(cnt):
                         ScriptProcess._process_script(script=loop_script,
@@ -277,25 +301,34 @@ class ScriptProcess:
                                                       store=store,
                                                       interval=interval,
                                                       wait=wait)
-                script = script.get("next")
-                continue
             check_condition = script.get("check")
             if check_condition:
                 is_success = ScriptProcess.__process_condition(temp_condition=check_condition,
                                                                return_record=return_record,
-                                                               webdriver=webdriver)
+                                                               global_script=global_script,
+                                                               webdriver=webdriver,
+                                                               store=store,
+                                                               interval=interval,
+                                                               wait=wait)
                 if not is_success:
                     return
             if_condition = script.get("if")
             if if_condition:
                 is_success = ScriptProcess.__process_condition(temp_condition=if_condition,
                                                                return_record=return_record,
-                                                               webdriver=webdriver)
+                                                               global_script=global_script,
+                                                               webdriver=webdriver,
+                                                               store=store,
+                                                               interval=interval,
+                                                               wait=wait)
                 if not is_success:
                     script = script.get("next")
                     continue
             temp_args = {"driver": webdriver}
             method = script.get("method")
+            if not method:
+                script = script.get("next")
+                continue
             for key, value in script.items():
                 if key.lower() not in ScriptProcess.__POP_KEY:
                     temp_args[key] = value
@@ -345,7 +378,7 @@ class ScriptProcess:
                         raise VariableError(msg)
                     script[key] = variable.get(variable_name)
             for key in script.keys():
-                if key in {"loop", "if", "check", "while", "script"}:
+                if key in {"loop", "if", "check", "while", "script", "fail_script"}:
                     ScriptProcess._replace_variable(script=script[key], variable=variable)
             script = script.get("next")
 
@@ -362,10 +395,15 @@ class ScriptProcess:
         res = {}
         temp = res
         for i in range(len(scripts)):
-            if "loop" in scripts[i].keys():
-                loop_temp = scripts[i]["loop"]
-                if "script" in loop_temp:
-                    loop_temp["script"] = ScriptProcess.generate(loop_temp["script"])
+            for k in scripts[i].keys():
+                if k == "loop":
+                    loop_temp = scripts[i]["loop"]
+                    if "script" in loop_temp:
+                        loop_temp["script"] = ScriptProcess.generate(loop_temp["script"])
+                if k in {"if", "check", "while"}:
+                    judge_temp = scripts[i][k]
+                    if "fail_script" in judge_temp:
+                        judge_temp["fail_script"] = ScriptProcess.generate(judge_temp["fail_script"])
             temp.update(scripts[i])
             if i != len(scripts) - 1:
                 while temp.get("next"):

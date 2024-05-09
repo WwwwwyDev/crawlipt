@@ -262,6 +262,9 @@ class TestCase(unittest.TestCase):
             "method": "redirect",
             "url": "https://www.bchrt.com/tools/click-counter/",
         }, {
+            "method": "getAttribute",
+            "xpath": "//*[@id=\"count\"]",
+            "name": "value",
             "loop": {
                 "while": {
                     "condition": "checkNum",
@@ -282,10 +285,6 @@ class TestCase(unittest.TestCase):
                     }
                 ]
             }
-        }, {
-            "method": "getAttribute",
-            "xpath": "//*[@id=\"count\"]",
-            "name": "value"
         }]
         json_str = cpt.Script.generate_json(step)
         res = cpt.Script(json_str)(webdriver)
@@ -293,7 +292,7 @@ class TestCase(unittest.TestCase):
         webdriver.quit()
 
     def test_conditions(self):
-        webdriver = get_driver()
+        # webdriver = get_driver()
         step = [{
             "method": "redirect",
             "url": "https://www.baidu.com/",
@@ -301,7 +300,7 @@ class TestCase(unittest.TestCase):
             "method": "input",
             "xpath": "//*[@id=\"kw\"]",
             "text": "your search text",
-            "if": {
+            "check": {
                 "condition": "presence",
                 "xpath": "//*[@id=\"su\"]"
             }
