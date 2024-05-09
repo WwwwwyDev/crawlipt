@@ -42,15 +42,23 @@ loader.process(webdriver)
 webdriver.quit()
 ```
 
-### 脚本执行器参数介绍
+### 脚本初始化参数介绍
 
 | 参数名                     | 类型                         | 介绍                                                                                                       |
 | ----------------------- | -------------------------- | -------------------------------------------------------------------------------------------------------- |
 | script                  | dict \| str \| list        | 预先编写好的脚本                                                                                                 |
 | global\_script          | dict \| str \| list = None | 全局执行脚本，这个脚本将在每次执行任意一个action方法前进行执行。例如：有的网站会随机弹出广告，影响下面脚本的执行，定义该脚本可以在执行action方法前判断是否有广告，如果有的话去进行一系列操作关闭广告 |
 | interval                | float = 0.5                | 每两次action方法执行的间隔                                                                                         |
-| wait                    | float = 10                 | 最长等待xpath对应元素出现的时间                                                                                       |
+| wait                    | float = 10                 | 如果action方法中含有xpath或css参数，则会自动隐式等待wait秒，直到对应元素在dom结构中出现                                                   |
 | is\_need\_syntax\_check | bool = True                | 是否需要执行前严格的脚本语法检查，如果关闭会增加执行时的错误概率                                                                         |
+
+### 脚本执行器参数介绍
+
+| 参数名                                                                    | 类型                          | 介绍                              |
+| ---------------------------------------------------------------------- | --------------------------- | ------------------------------- |
+| [webdriver](https://www.selenium.dev/documentation/webdriver/drivers/) | WebDriver                   | selenium的webdriver对象，需要根据情况自行配置 |
+| [variable](variable.md)                                                | VariableBase \| None = None | 本次执行的变量值                        |
+| [store](store.md)                                                      | StoreBase \| None = None    | 本次执行的存储器                        |
 
 ### 通过列表step方式编写脚本
 
