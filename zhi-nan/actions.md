@@ -41,6 +41,7 @@ description: crawlipt包含了一些内置的action，以便你更好地与网�
 | clear          | window.clear   | None                                                                          | None | 清空所有操作状态                                     |
 | log            | None           | msg: str                                                                      | None | 在终端打印msg信息                                   |
 | interval       | None           | num: str \| int                                                               | None | 显式等待num秒时间                                   |
+| intervalRandom | None           | num: str \| int                                                               | None | 显示等待\[num/2, num]秒时间                         |
 
 ### 添加你自己的action
 
