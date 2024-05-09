@@ -401,6 +401,16 @@ class TestCase(unittest.TestCase):
         print(store2.data)
         webdriver.quit()
 
+    def test_scroll(self):
+        webdriver = get_driver()
+        step = [{
+            "method": "redirect",
+            "url": "https://ec.ltn.com.tw/list/international",
+        }, {
+            "method": "scrollToBottom"
+        } ]
+        cpt.Script(step, interval=3)(webdriver)
+
 
 if __name__ == '__main__':
     unittest.main()

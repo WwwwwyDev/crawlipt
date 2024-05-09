@@ -32,4 +32,18 @@ class Util:
             return
         if isinstance(num, str):
             num = int(num)
-        time.sleep(random.uniform(num / 2, num))
+        time.sleep(num)
+
+    @staticmethod
+    @check(exclude="driver")
+    def intervalRandom(driver: WebDriver, num: str | int) -> None:
+        """
+        delay [num/2, num] seconds
+        :param driver: selenium webdriver
+        :param num: the interval number
+        """
+        if not driver:
+            return
+        if isinstance(num, str):
+            num = int(num)
+        time.sleep(random.uniform(num/2, num))
