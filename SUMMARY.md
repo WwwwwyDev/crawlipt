@@ -12,5 +12,8 @@
   * [Annotation](zhi-nan/annotation.md)
   * [Variable](zhi-nan/variable.md)
   * [Store](zhi-nan/store.md)
+* [指令](zhi-ling/README.md)
+  * [关键词](zhi-ling/guan-jian-ci.md)
+  * [标识符](zhi-ling/biao-shi-fu.md)
 * [示例](demo.md)
 * [github](https://github.com/WwwwwyDev/crawlipt)
