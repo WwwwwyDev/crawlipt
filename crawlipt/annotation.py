@@ -42,7 +42,7 @@ def check(exclude: list | str):
                 if type_.annotation == type_.empty:
                     raise ParamTypeError(f"Parameter {name} must be indicated the type.")
                 if name not in all_kwargs:
-                    raise ParamTypeError(f"Parameter {name} is not in the defined parameter list.")
+                    raise ParamTypeError(f"Parameter {name} is in the defined parameter list, but missing.")
                 if all_kwargs[name] is None and type_.default is not type_.empty:
                     continue
                 if all_kwargs[name] == "__PRE_RETURN__":
