@@ -19,5 +19,5 @@ description: action和condition方法定义时，参数名应避开这些关键�
 </code></pre> |
 | xpath        | 显式定义后会自动在执行前进行隐式等待                                                                                                                                                                  |
 | css          | 显式定义后会自动在执行前进行隐式等待                                                                                                                                                                  |
-| fail\_script | condition执行为False时调用                                                                                                                                                                |
+| fail\_script | condition结果False时执行该脚本                                                                                                                                                                |
 
