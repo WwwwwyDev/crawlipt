@@ -218,7 +218,7 @@ class TestCase(unittest.TestCase):
         webdriver.quit()
 
     def test07(self):
-        # webdriver = get_driver()
+        webdriver = get_driver()
         step = [{
             "method": "redirect",
             "url": "https://artsandculture.google.com/",
@@ -236,8 +236,8 @@ class TestCase(unittest.TestCase):
             "method": "enter",
             "xpath": "//*[@id=\"yDmH0d\"]/div[2]/div[2]/div/input",
         }]
-        cpt.Script(step, interval=1)
-        # webdriver.quit()
+        cpt.Script(step, interval=1)(webdriver)
+        webdriver.quit()
 
     def test_loop(self):
         webdriver = get_driver()
