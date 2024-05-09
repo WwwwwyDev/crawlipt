@@ -242,6 +242,7 @@ class ScriptProcess:
                                               global_script=global_script,
                                               webdriver=webdriver,
                                               interval=interval,
+                                              return_record=return_record,
                                               wait=wait,
                                               store=store,)
         return is_success
