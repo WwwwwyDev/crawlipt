@@ -28,7 +28,8 @@ description: crawlipt包含了一些内置的action，以便你更好地与网�
 | selectByValue  | None           | <p>xpath : str</p><p>value : str</p>                                          | None | 通过值对下拉选择器选择                                  |
 | selectByIndex  | None           | <p>xpath : str</p><p>index : int</p>                                          | None | 通过index索引对下拉选择器选择                            |
 | slide          | None           | <p>xpath : str</p><p>position : list-list([x,y])</p>                          | None | 按住某个对象，滑动到相对于这个对象的(x,y)坐标                    |
-| scrollByJs     | None           | None                                                                          | None | 通过执行js代码来实现滚动                                |
+| scrollByJs     | None           | height: str \| int                                                            | None | 通过执行js代码来实现滚动height高度（为负数则向上滚动）              |
+| scrollToBottom | None           | None                                                                          | None | 通过js直接滚动到底部                                  |
 | scrollBySpace  | None           | <p>cnt: str | int, </p><p>frequency: int = 0.1</p>                            | None | 使用按空格按键来实现滚动                                 |
 | alert          | None           | <p>operation: str  option in ["dismiss", "accept"],  </p><p>text: str = "</p> | None | 操作浏览器弹出的alert，并返回alert的内容                    |
 | getInnerText   | None           | xpath : str                                                                   | str  | 获取元素的内部文本，如果元素不可见将获取不到                       |
