@@ -125,7 +125,7 @@ class TestCase(unittest.TestCase):
             "method": "click",
             "xpath": "//*[@id=\"account\"]/div[2]/div[2]/div/div[2]/div[1]/div[4]/a",
         }, {
-            "method": "switchToframe",
+            "method": "switchToFrame",
             "xpath": "//*[@id=\"tcaptcha_iframe_dy\"]",
         }, {"method": "slide",
             "xpath": "//*[@id=\"tcOperation\"]/div[6]/img",
@@ -381,7 +381,7 @@ class TestCase(unittest.TestCase):
         }, {
             "method": "crawl_baidu_list",
             "limit": "__v-limit__",
-        },{
+        }, {
             "method": "clear"
         }]
         v1 = cpt.Variable({
@@ -400,6 +400,7 @@ class TestCase(unittest.TestCase):
         loader.process(webdriver=webdriver, store=store2, variable=v2)
         print(store2.data)
         webdriver.quit()
+
 
 if __name__ == '__main__':
     unittest.main()

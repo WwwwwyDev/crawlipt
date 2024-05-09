@@ -2,8 +2,8 @@ import random
 import time
 
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.remote.webdriver import WebDriver
-
 from crawlipt.annotation import check, alias
 
 
@@ -59,7 +59,8 @@ class Click:
         """
         elements = driver.find_elements(By.XPATH, xpath)
         for element in elements:
-            element.click()
+            if EC.element_to_be_clickable(element):
+                element.click()
 
     @staticmethod
     @check(exclude="driver")
