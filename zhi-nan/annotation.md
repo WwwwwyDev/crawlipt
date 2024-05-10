@@ -18,7 +18,7 @@ def A(a:str,b:int,c:float):
 
 ### alias 装饰器
 
-alias装饰器可以为你添加的action以及condition方法添加一个别名，脚本可以通过别名映射到函数。
+alias装饰器可以为你添加的action以及condition方法添加一个别名，脚本可以通过别名映射到函数。替换规则：不设置alias则直接进行方法名映射，如果方法名已经存在，则不会覆盖，添加失败；设置alias后，同时映射方法名和alias名，如果方法名和alias都存在，方法名不会覆盖，alias会覆盖。应尽可能避免重名情况出现。
 
 ```python
 import crawlipt as cpt
