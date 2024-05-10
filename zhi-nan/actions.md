@@ -32,8 +32,8 @@ description: crawlipt包含了一些内置的action，以便你更好地与网�
 | scrollToBottom | scroll.bottom    | None                                                                          | None | 通过js直接滚动到底部                                  |
 | scrollBySpace  | scroll.space     | <p>cnt: str | int, </p><p>frequency: int = 0.1</p>                            | None | 使用按空格按键来实现滚动                                 |
 | alert          | None             | <p>operation: str  option in ["dismiss", "accept"],  </p><p>text: str = "</p> | None | 操作浏览器弹出的alert，并返回alert的内容                    |
-| getInnerText   | get.innertext    | xpath : str                                                                   | str  | 获取元素的内部文本，如果元素不可见将获取不到                       |
-| getTextContent | get.textcontent  | xpath : str                                                                   | str  | 获取元素的内部文本                                    |
+| getInnerText   | get.innerText    | xpath : str                                                                   | str  | 获取元素的内部文本，如果元素不可见将获取不到                       |
+| getTextContent | get.textContent  | xpath : str                                                                   | str  | 获取元素的内部文本                                    |
 | getAttribute   | get.attribute    | <p>xpath : str</p><p>name : str</p>                                           | str  | 获取元素的某个属性                                    |
 | close          | window.close     | None                                                                          | None | 关闭当前窗口                                       |
 | back           | window.back      | None                                                                          | None | 在浏览器历史记录中后退一步                                |
