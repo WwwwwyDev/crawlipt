@@ -400,3 +400,38 @@ loader.process(webdriver=webdriver, store=store2, variable=v2)
 print(store2.data)
 webdriver.quit()
 ```
+
+### 执行js代码
+
+执行js代码，并返回任意类型
+
+```python
+js_code1 = '''var element = document.querySelector("body > div > main > div.row.justify-content-center.pt-2.pb-3.-bg-selenium-cyan > div > div > h2");
+             return element.innerText;
+            '''
+js_code2 = '''
+             return 1
+            '''
+step = [{
+    "method": "redirect",
+    "url": "https://www.selenium.dev/",
+}, {
+    "method": "execute",
+    "js": "__v-js_code__",
+}, {
+    "method": "log",
+    "msg": "__PRE_RETURN__"
+}]
+
+v1 = cpt.Variable({
+    "js_code": js_code1,
+})
+v2 = cpt.Variable({
+    "js_code": js_code2,
+})
+webdriver = get_driver(is_headless=True)
+loader = cpt.Script(step, interval=3)
+print(type(loader.process(webdriver, variable=v1)))
+print(type(loader.process(webdriver, variable=v2)))
+webdriver.quit()
+```
