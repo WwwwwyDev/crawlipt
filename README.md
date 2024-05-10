@@ -1,6 +1,6 @@
 <!-- markdownlint-disable MD033 MD041 -->
 <p align="center">
-  <a href="https://github.com/WwwwwyDev/crawlipt"><img src="https://s2.loli.net/2024/05/10/PCcpwynVMmURjBv.png" alt="crawlist" style="width:75%; height:75%" ></a>
+  <a href="https://github.com/WwwwwyDev/crawlipt"><img src="https://s2.loli.net/2024/05/10/PCcpwynVMmURjBv.png" alt="crawlist" style="width:50%; height:50%" ></a>
 </p>
 
 <div align="center">
