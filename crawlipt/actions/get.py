@@ -1,13 +1,14 @@
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from crawlipt.annotation import check
+from crawlipt.annotation import check, alias
 
 
 class Get:
 
     @staticmethod
     @check(exclude="driver")
+    @alias("get.innerText")
     def getInnerText(driver: WebDriver, xpath: str) -> str:
         """
         get inner text of element
@@ -22,6 +23,7 @@ class Get:
 
     @staticmethod
     @check(exclude="driver")
+    @alias("get.textContent")
     def getTextContent(driver: WebDriver, xpath: str) -> str:
         """
         get text content of element
@@ -36,6 +38,7 @@ class Get:
 
     @staticmethod
     @check(exclude="driver")
+    @alias("get.attribute")
     def getAttribute(driver: WebDriver, xpath: str, name: str) -> str:
         """
         get the attribute of an element

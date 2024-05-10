@@ -12,7 +12,7 @@ class Window:
         close all windows
         :param driver: selenium webdriver
         """
-        for _ in range(driver.window_handles.__len__()-1):
+        for _ in range(driver.window_handles.__len__() - 1):
             driver.close()
         driver.get("data:,")
 
@@ -55,3 +55,13 @@ class Window:
         :param driver: selenium webdriver
         """
         return driver.current_url
+
+    @staticmethod
+    @check(exclude="driver")
+    @alias("window.html")
+    def html(driver: WebDriver) -> str:
+        """
+        return the current page source
+        :param driver: selenium webdriver
+        """
+        return driver.page_source
