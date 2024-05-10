@@ -14,6 +14,18 @@ description: crawlipt包含了一些内置的condition，以便你在与网页�
 
 在condition中如果含有fail\_script关键词，则在condition失败后会执行该脚本
 
+<pre class="language-json"><code class="lang-json"><strong>{
+</strong><strong>    "check": {
+</strong>        "condition": "presence",
+        "xpath": "//*[@id=\"main-metro\"]/ul/li[3]/a[3]",
+        "fail_script": [{
+            "method": "log",
+            "msg": "[fail] 登录失败"
+        }]
+    }
+}
+</code></pre>
+
 ### 添加你自己的condition
 
 在你添加自己的action方法前，建议你先学习一下selenium的基本使用
