@@ -406,7 +406,8 @@ webdriver.quit()
 执行js代码，并返回任意类型
 
 ```python
-js_code1 = '''var element = document.querySelector("body > div > main > div.row.justify-content-center.pt-2.pb-3.-bg-selenium-cyan > div > div > h2");
+js_code1 = '''
+             var element = document.querySelector("body > div > main > div.row.justify-content-center.pt-2.pb-3.-bg-selenium-cyan > div > div > h2");
              return element.innerText;
             '''
 js_code2 = '''
