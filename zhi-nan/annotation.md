@@ -6,7 +6,7 @@ description: crawlipt提供了check和alias两个装饰器来控制action以及c
 
 ### check 装饰器
 
-check装饰器用来对函数调用时进行参数检查，如果调用时参数不符合类型，则抛出异常。使用check装饰器可以增强脚本检查，以及避免脚本执行由于参数类型非法导致的错误。exclude参数意味着你将排除这几个参数的检查。
+check装饰器用来对函数调用时进行参数检查，如果调用时参数不符合类型，则抛出异常。使用check装饰器可以增强脚本检查，以及避免脚本执行由于参数类型非法导致的错误。exclude参数意味着你将排除这几个参数的检查。注：Any类型将会自动排除检查。
 
 ```python
 import crawlipt as cpt
