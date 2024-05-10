@@ -24,6 +24,8 @@ layout:
 
 {% embed url="https://github.com/WwwwwyDev/crawlipt" %}
 
+{% embed url="https://gitee.com/wu_wen_yi/crawlipt" %}
+
 ### 介绍
 
 在python中，你可以使用本框架去驱动selenium的webdriver，脚本使用json格式，以便你更好地跨语言操作以及以文本方式存储在物理介质中。
