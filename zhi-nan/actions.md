@@ -30,7 +30,10 @@ description: crawlipt包含了一些内置的action，以便你更好地与网�
 | slide             | None                | <p>xpath : str</p><p>position : list-list([x,y])</p>                          | None | 按住某个对象，滑动到相对于这个对象的(x,y)坐标                    |
 | scrollByJs        | scroll.js           | height: str \| int                                                            | None | 通过执行js代码来实现滚动height高度（为负数则向上滚动）              |
 | scrollToBottom    | scroll.bottom       | None                                                                          | None | 通过js直接滚动到底部                                  |
-| scrollBySpace     | scroll.space        | <p>cnt: str | int, </p><p>frequency: int = 0.1</p>                            | None | 使用按空格按键来实现滚动                                 |
+| scrollToTop       | scroll. top         | None                                                                          | None | 通过js直接滚动到顶部 
+| scrollBySpace     | scroll.space        | <p>cnt: str | int, </p><p>frequency: int = 0.1</p>                            | None | 使用按空格按键来实现滚动                                 |                                 |
+| scrollUpByArrow   | scroll. arrow. up   | cnt: str \| int, frequency: float = 0.1                                       | None | 通过上箭头按键实现向上滚动                                |
+| scrollDownByArrow | scroll. arrow. down | cnt: str \| int, frequency: float = 0.1                                       | None | 通过下箭头按键实现向下滚动                                |
 | alert             | None                | <p>operation: str  option in ["dismiss", "accept"],  </p><p>text: str = "</p> | None | 操作浏览器弹出的alert，并返回alert的内容                    |
 | getInnerText      | get.innerText       | xpath : str                                                                   | str  | 获取元素的内部文本，如果元素不可见将获取不到                       |
 | getTextContent    | get.textContent     | xpath : str                                                                   | str  | 获取元素的内部文本                                    |
@@ -40,12 +43,11 @@ description: crawlipt包含了一些内置的action，以便你更好地与网�
 | forward           | window.forward      | None                                                                          | None | 在浏览器历史记录中前进一步                                |
 | url               | window.url          | None                                                                          | str  | 获取当前窗口的url，并返回                               |
 | clear             | window.clear        | None                                                                          | None | 清空所有操作状态                                     |
-| log               | None                | msg: str                                                                      | None | 在终端打印msg信息                                   |
+| html | window.html | None             | str | 返回当前driver的page_source                                |
+| log               | None                | msg: Any                                                                      | None | 在终端打印msg信息                                   |
 | interval          | None                | num: str \| int                                                               | None | 显式等待num秒时间                                   |
 | intervalRandom    | interval.random     | num: str \| int                                                               | None | 显示等待\[num/2, num]秒时间                         |
-| scrollToTop       | scroll. top         | None                                                                          | None | 通过js直接滚动到顶部                                  |
-| scrollUpByArrow   | scroll. arrow. up   | cnt: str \| int, frequency: float = 0.1                                       | None | 通过上箭头按键实现向上滚动                                |
-| scrollDownByArrow | scroll. arrow. down | cnt: str \| int, frequency: float = 0.1                                       | None | 通过下箭头按键实现向下滚动                                |
+| execute    | None     | js: str                                                               | Any | 执行js code                         |
 
 ### 添加你自己的action
 
