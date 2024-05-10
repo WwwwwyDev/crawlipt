@@ -10,7 +10,6 @@ from crawlipt.annotation import check, alias
 class Click:
     @staticmethod
     @check(exclude="driver")
-    @alias("C")
     def click(driver: WebDriver, xpath: str) -> None:
         """
         Handling click events of first element
@@ -22,7 +21,8 @@ class Click:
 
     @staticmethod
     @check(exclude="driver")
-    def clickMulti(driver: WebDriver, xpath: str, cnt: str | int, frequency: int = 0.1) -> None:
+    @alias("click.multi")
+    def clickMulti(driver: WebDriver, xpath: str, cnt: str | int, frequency: float = 0.1) -> None:
         """
         Handling click events of first element multiple times
         :param driver: selenium webdriver
@@ -40,6 +40,7 @@ class Click:
 
     @staticmethod
     @check(exclude="driver")
+    @alias("click.js")
     def clickByJs(driver: WebDriver, xpath: str) -> None:
         """
         Handling click events of first element by js 'arguments[0].click();'
@@ -51,6 +52,7 @@ class Click:
 
     @staticmethod
     @check(exclude="driver")
+    @alias("click.all")
     def clickAll(driver: WebDriver, xpath: str) -> None:
         """
         Handling click events of all element
@@ -64,6 +66,7 @@ class Click:
 
     @staticmethod
     @check(exclude="driver")
+    @alias("click.all.js")
     def clickAllByJs(driver: WebDriver, xpath: str) -> None:
         """
         Handling click events of all element by js 'arguments[0].click();'

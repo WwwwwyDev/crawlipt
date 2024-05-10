@@ -100,6 +100,8 @@ class ScriptProcess:
                         raise ScriptSyntaxError(ParamTypeError(msg), condition, pre_deep + str(current_deep))
                     annotation = signature(ScriptProcess.CONDITIONS[condition]).parameters[key].annotation
                     pre_return_flag = return_record[value[5:-2]]
+                    if pre_return_flag is Any or annotation is Any:
+                        continue
                     if pre_return_flag != annotation:
                         msg = f"The return_flag is {pre_return_flag}, But parameter {key} is {annotation}."
                         raise ScriptSyntaxError(ParamTypeError(msg), condition, pre_deep + str(current_deep))
@@ -186,6 +188,8 @@ class ScriptProcess:
                 for key, value in temp_args.items():
                     if value == "__PRE_RETURN__":
                         annotation = signature(ScriptProcess.ACTIONS[method]).parameters[key].annotation
+                        if pre_return is Any or annotation is Any:
+                            continue
                         if pre_return != annotation:
                             msg = f"The pre-return is {pre_return}, But parameter {key} is {annotation}."
                             raise ScriptSyntaxError(ParamTypeError(msg), method, pre_deep + str(current_deep))
@@ -197,6 +201,8 @@ class ScriptProcess:
                             raise ScriptSyntaxError(ParamTypeError(msg), method, pre_deep + str(current_deep))
                         annotation = signature(ScriptProcess.ACTIONS[method]).parameters[key].annotation
                         pre_return_flag = return_record[value[5:-2]]
+                        if pre_return_flag is Any or annotation is Any:
+                            continue
                         if pre_return_flag != annotation:
                             msg = f"The return_flag is {pre_return_flag}, But parameter {key} is {annotation}."
                             raise ScriptSyntaxError(ParamTypeError(msg), method, pre_deep + str(current_deep))
@@ -440,7 +446,9 @@ class ScriptProcess:
         for name in signature(func).parameters.keys():
             if name in ScriptProcess.__POP_KEY:
                 raise ParamTypeError(f"the parameter name: {name} conflicts with the keyword")
+        cnt = 0
         if func.__name__ not in ScriptProcess.ACTIONS:
+            cnt += 1
             ScriptProcess.ACTIONS[func.__name__] = func
         func_bak = func
         try:
@@ -448,7 +456,10 @@ class ScriptProcess:
         except Exception:
             pass
         if "__crawlipt_func_name__" in func.__dict__:
+            cnt += 1
             ScriptProcess.ACTIONS[func.__crawlipt_func_name__] = func_bak
+        if not cnt:
+            raise ParamTypeError(f"Add failed")
 
     @staticmethod
     def add_condition(func: callable) -> None:
@@ -472,7 +483,9 @@ class ScriptProcess:
         for name in signature(func).parameters.keys():
             if name in ScriptProcess.__POP_KEY:
                 raise ParamTypeError(f"the parameter name: {name} conflicts with the keyword")
+        cnt = 0
         if func.__name__ not in ScriptProcess.CONDITIONS:
+            cnt += 1
             ScriptProcess.CONDITIONS[func.__name__] = func
         func_bak = func
         try:
@@ -480,7 +493,10 @@ class ScriptProcess:
         except Exception:
             pass
         if "__crawlipt_func_name__" in func.__dict__:
+            cnt += 1
             ScriptProcess.CONDITIONS[func.__crawlipt_func_name__] = func_bak
+        if not cnt:
+            raise ParamTypeError(f"Add failed")
 
 
 class Script(ScriptProcess):

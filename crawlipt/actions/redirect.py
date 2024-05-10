@@ -7,6 +7,7 @@ from crawlipt.annotation import check, alias
 class Redirect:
     @staticmethod
     @check(exclude="driver")
+    @alias("redirect.search")
     def searchRedirect(driver: WebDriver, url: str, keyword: str) -> None:
         """
         Replace % s in the path with keyword and redirect it
@@ -19,7 +20,6 @@ class Redirect:
 
     @staticmethod
     @check(exclude="driver")
-    @alias("R")
     def redirect(driver: WebDriver, url: str) -> None:
         """
         Direct redirection
@@ -30,6 +30,7 @@ class Redirect:
 
     @staticmethod
     @check(exclude="driver")
+    @alias("redirect.new")
     def redirectNewTab(driver: WebDriver, url: str) -> None:
         """
         redirect to a new tab

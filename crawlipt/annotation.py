@@ -1,5 +1,7 @@
 from inspect import signature
 from functools import wraps
+from typing import Any
+
 from crawlipt.error import ParamTypeError
 
 
@@ -50,6 +52,8 @@ def check(exclude: list | str):
                 if isinstance(all_kwargs[name], str) and all_kwargs[name].startswith("__rf-") and all_kwargs[name].endswith("__"):
                     continue
                 if isinstance(all_kwargs[name], str) and all_kwargs[name].startswith("__v-") and all_kwargs[name].endswith("__"):
+                    continue
+                if type_.annotation is Any:
                     continue
                 if isinstance(all_kwargs[name], int) and type_.annotation is float:
                     all_kwargs[name] = float(all_kwargs.get(name))

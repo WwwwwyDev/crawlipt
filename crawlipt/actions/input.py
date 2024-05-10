@@ -8,7 +8,6 @@ from crawlipt.annotation import check, alias
 class Input:
     @staticmethod
     @check(exclude="driver")
-    @alias("I")
     def input(driver: WebDriver, xpath: str, text: str) -> None:
         """
         Handling keyboard input events
@@ -21,7 +20,6 @@ class Input:
 
     @staticmethod
     @check(exclude="driver")
-    @alias("E")
     def enter(driver: WebDriver, xpath: str) -> None:
         """
         Press the enter key once
@@ -31,3 +29,4 @@ class Input:
         """
         element = driver.find_element(By.XPATH, xpath)
         element.send_keys(Keys.RETURN)
+

@@ -1,12 +1,13 @@
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.support.select import Select as WebSelect
-from crawlipt.annotation import check
+from crawlipt.annotation import check, alias
 
 
 class Select:
     @staticmethod
     @check(exclude="driver")
+    @alias("select.text")
     def selectByText(driver: WebDriver, xpath: str, text: str) -> None:
         """
         Handling select events
@@ -19,6 +20,7 @@ class Select:
 
     @staticmethod
     @check(exclude="driver")
+    @alias("select.value")
     def selectByValue(driver: WebDriver, xpath: str, value: str) -> None:
         """
         Handling select events
@@ -31,6 +33,7 @@ class Select:
 
     @staticmethod
     @check(exclude="driver")
+    @alias("select.index")
     def selectByIndex(driver: WebDriver, xpath: str, index: int) -> None:
         """
         Handling select events

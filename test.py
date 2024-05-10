@@ -400,15 +400,36 @@ class TestCase(unittest.TestCase):
         print(store2.data)
         webdriver.quit()
 
-    def test_scroll(self):
-        webdriver = get_driver()
+    def test_08(self):
+        js_code1 = '''
+                     var element = document.querySelector("body > div > main > div.row.justify-content-center.pt-2.pb-3.-bg-selenium-cyan > div > div > h2");
+                     return element.innerText;
+                    '''
+        js_code2 = '''
+                     return 1
+                    '''
         step = [{
             "method": "redirect",
-            "url": "https://ec.ltn.com.tw/list/international",
+            "url": "https://www.selenium.dev/",
         }, {
-            "method": "scrollToBottom"
-        } ]
-        cpt.Script(step, interval=3)(webdriver)
+            "method": "execute",
+            "js": "__v-js_code__",
+        }, {
+            "method": "log",
+            "msg": "__PRE_RETURN__"
+        }]
+
+        v1 = cpt.Variable({
+            "js_code": js_code1,
+        })
+        v2 = cpt.Variable({
+            "js_code": js_code2,
+        })
+        webdriver = get_driver(is_headless=True)
+        loader = cpt.Script(step, interval=3)
+        print(type(loader.process(webdriver, variable=v1)))
+        print(type(loader.process(webdriver, variable=v2)))
+        webdriver.quit()
 
 
 if __name__ == '__main__':

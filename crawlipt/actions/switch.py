@@ -1,11 +1,12 @@
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
-from crawlipt.annotation import check
+from crawlipt.annotation import check, alias
 
 
 class Switch:
     @staticmethod
     @check(exclude="driver")
+    @alias("switch.tab.last")
     def switchLastTab(driver: WebDriver) -> None:
         """
         Switch to the last handle
@@ -16,6 +17,7 @@ class Switch:
 
     @staticmethod
     @check(exclude="driver")
+    @alias("switch.tab")
     def switchTab(driver: WebDriver, index: int | str) -> None:
         """
         Switch to the index handle
@@ -29,6 +31,7 @@ class Switch:
 
     @staticmethod
     @check(exclude="driver")
+    @alias("switch.frame")
     def switchToFrame(driver: WebDriver, xpath: str) -> None:
         """
         Switch to the inner frame
@@ -40,6 +43,7 @@ class Switch:
 
     @staticmethod
     @check(exclude="driver")
+    @alias("switch.frame.out")
     def switchOutFrame(driver: WebDriver) -> None:
         """
         Switch to the outer frame
