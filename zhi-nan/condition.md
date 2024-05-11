@@ -14,9 +14,10 @@ description: crawlipt包含了一些内置的condition，以便你在与网页�
 
 在condition中如果含有fail\_script关键词，则在condition失败后会执行该脚本
 
-<pre class="language-json"><code class="lang-json"><strong>{
-</strong><strong>    "check": {
-</strong>        "condition": "presence",
+```json
+{
+    "check": {
+        "condition": "presence",
         "xpath": "//*[@id=\"main-metro\"]/ul/li[3]/a[3]",
         "fail_script": [{
             "method": "log",
@@ -24,7 +25,24 @@ description: crawlipt包含了一些内置的condition，以便你在与网页�
         }]
     }
 }
-</code></pre>
+```
+
+### 逻辑取反
+
+使用\_\_not-{your condition}\_\_指令可以对condition结果进行取反
+
+```json
+{
+    "check": {
+        "condition": "__not-presence__",
+        "xpath": "//*[@id=\"main-metro\"]/ul/li[3]/a[3]",
+        "fail_script": [{
+            "method": "log",
+            "msg": "[fail] 登录失败"
+        }]
+    }
+}
+```
 
 ### 添加你自己的condition
 

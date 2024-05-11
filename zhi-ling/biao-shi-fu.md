@@ -9,4 +9,5 @@ description: 任何标识符均会按照一定规则进行替换
 | \_\_PRE\_RETURN\_\_             | 最近action方法返回值接受变量 |
 | \_\_rf-{your return \_flag}\_\_ | return\_flag接受变量  |
 | \_\_v-(your variable}\_\_       | variable接受变量      |
+| \_\_not-(your condition}\_\_    | 将condition结果取反    |
 

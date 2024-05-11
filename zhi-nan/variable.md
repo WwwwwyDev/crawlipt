@@ -27,21 +27,6 @@ step = [{
 
 在编写脚本变量时，需要使用标识符"\_\_v-{your variable}\_\_"。否则在语法检查时会被判断为普通参数处理。
 
-### variable对象
-
-脚本中的变量会在执行期间被自动替换，你可以创建crawlipt内置的Variable对象，初始化参数为字典或者json格式字符串。字典中需要将你的变量名以及值一一对应，在执行期间会替换脚本中的变量名为你设置的变量值。
-
-```python
-import crawlipt as cpt
-v = cpt.Variable({
-            "searchKey": "hello",
-            "button_xpath": "//*[@id=\"su\"]"
-        })
-loader = cpt.Script(step, interval=3)
-loader.process(webdriver=webdriver,
-               variable=v) # 在执行阶段传入变量对象
-```
-
 ### 实现你自己的variable对象
 
 你需要继承VariableBase对象，并且实现get、\_\_contains\_\_ 这两个方法
@@ -62,4 +47,21 @@ class Variable(cpt.VariableBase):
     @cpt.check
     def __contains__(self, key: str):
         return key in self.values
+```
+
+上述实现已在crawlipt中内置
+
+### 内置variable对象
+
+脚本中的变量会在执行期间被自动替换，你可以创建crawlipt内置的Variable对象，初始化参数为字典或者json格式字符串。字典中需要将你的变量名以及值一一对应，在执行期间会替换脚本中的变量名为你设置的变量值。
+
+```python
+import crawlipt as cpt
+v = cpt.Variable({
+            "searchKey": "hello",
+            "button_xpath": "//*[@id=\"su\"]"
+        })
+loader = cpt.Script(step, interval=3)
+loader.process(webdriver=webdriver,
+               variable=v) # 在执行阶段传入变量对象
 ```
