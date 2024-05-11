@@ -69,12 +69,18 @@ class ScriptProcess:
 
     @staticmethod
     @check
-    def __condition_check(temp_condition: dict, name: str, pre_deep: str, current_deep: int, return_record: dict) -> None:
+    def __condition_check(temp_condition: dict, name: str, pre_deep: str, current_deep: int,
+                          return_record: dict) -> None:
         condition = temp_condition.get("condition")
         temp_args = {"driver": None}
         if not condition:
             msg = "(Deep %s) condition of '%s' is missing" % (pre_deep + str(current_deep), name)
             raise ScriptSyntaxError(ParamTypeError(msg), "", pre_deep + str(current_deep))
+        if not isinstance(condition, str):
+            msg = "(Deep %s) The value of condition must be type of str" % (pre_deep + str(current_deep))
+            raise ScriptSyntaxError(ParamTypeError(msg), "", pre_deep + str(current_deep))
+        if condition.startswith("__not-") and condition.endswith("__"):
+            condition = condition[6: -2]
         if condition not in ScriptProcess.CONDITIONS.keys():
             msg = "(Deep %s) Could not found the Condition Method in '%s'" % (pre_deep + str(current_deep), name)
             raise ScriptSyntaxError(ParamTypeError(msg), condition, pre_deep + str(current_deep))
@@ -172,6 +178,9 @@ class ScriptProcess:
             if not method:
                 script = script.get("next")
                 continue
+            if not isinstance(method, str):
+                msg = "(Deep %s) The value of method must be type of str" % (pre_deep + str(current_deep))
+                raise ScriptSyntaxError(ParamTypeError(msg), "", pre_deep + str(current_deep))
             if method not in ScriptProcess.ACTIONS.keys():
                 msg = "(Deep %s) Could not found the Action Method" % (pre_deep + str(current_deep))
                 raise ScriptSyntaxError(ParamTypeError(msg), method, pre_deep + str(current_deep))
@@ -225,8 +234,12 @@ class ScriptProcess:
     @staticmethod
     @check
     def __process_condition(temp_condition: dict, webdriver: WebDriver, return_record: dict,
-                            global_script: dict,  interval: float, wait: float, store: StoreBase = None) -> bool:
+                            global_script: dict, interval: float, wait: float, store: StoreBase = None) -> bool:
         condition = temp_condition.get("condition")
+        trans_flag = False
+        if condition.startswith("__not-") and condition.endswith("__"):
+            trans_flag = True
+            condition = condition[6: -2]
         return_flag = temp_condition.get("return_flag")
         temp_args = {"driver": webdriver}
         for key, value in temp_condition.items():
@@ -239,6 +252,8 @@ class ScriptProcess:
                 if isinstance(value, str) and value.startswith("__rf-") and value.endswith("__"):
                     temp_args[key] = return_record[value[5:-2]]
         is_success = ScriptProcess.CONDITIONS[condition](**temp_args)
+        if trans_flag:
+            is_success = not is_success
         if return_flag:
             return_record[return_flag] = is_success
         if not is_success:
@@ -250,7 +265,7 @@ class ScriptProcess:
                                               interval=interval,
                                               return_record=return_record,
                                               wait=wait,
-                                              store=store,)
+                                              store=store, )
         return is_success
 
     @staticmethod
@@ -363,6 +378,8 @@ class ScriptProcess:
                                               interval=interval,
                                               wait=wait)
             current_return = Script.ACTIONS[method](**temp_args)
+            if isinstance(store, StoreBase) and current_return:
+                store.set(method=method, value=current_return)
             return_flag = script.get("return_flag")
             if return_flag:
                 return_record[return_flag] = current_return

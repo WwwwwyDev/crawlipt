@@ -26,7 +26,7 @@ The script for selenium in python
 
 ## introduction
 
-You can use Crawlipt to driver the selenium by script in python.The script adopts JSON format for better cross language operations and physical storage.
+You can use crawlipt to driver the selenium by script in python.The script adopts JSON format for better cross language operations and physical storage.
 
 ## installing
 You can use pip or pip3 to install the crawlipt
