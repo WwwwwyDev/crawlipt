@@ -292,24 +292,24 @@ class TestCase(unittest.TestCase):
         webdriver.quit()
 
     def test_conditions(self):
-        # webdriver = get_driver()
+        webdriver = get_driver()
         step = [{
             "method": "redirect",
             "url": "https://www.baidu.com/",
         }, {
             "method": "input",
             "xpath": "//*[@id=\"kw\"]",
-            "text": "your search text",
+            "text": "1",
             "check": {
-                "condition": "presence",
+                "condition": "__not-presence__",
                 "xpath": "//*[@id=\"su\"]"
             }
         }, {
             "method": "input",
             "xpath": "//*[@id=\"kw\"]",
-            "text": "your search text",
+            "text": "  2",
         }]
-        cpt.Script(step, interval=3)
+        cpt.Script(step, interval=3)(webdriver)
 
     def test_variable(self):
         webdriver = get_driver()
@@ -427,8 +427,10 @@ class TestCase(unittest.TestCase):
         })
         webdriver = get_driver(is_headless=True)
         loader = cpt.Script(step, interval=3)
-        print(type(loader.process(webdriver, variable=v1)))
-        print(type(loader.process(webdriver, variable=v2)))
+        s = cpt.Store(is_replace=True)
+        print(type(loader.process(webdriver, variable=v1, store=s)))
+        print(type(loader.process(webdriver, variable=v2, store=s)))
+        print(s.data)
         webdriver.quit()
 
 
