@@ -403,7 +403,7 @@ webdriver.quit()
 
 ### 执行js代码
 
-执行js代码，并返回任意类型
+执行js代码，返回任意类型，并结合使用内置store和variable
 
 ```python
 js_code1 = '''
@@ -432,7 +432,9 @@ v2 = cpt.Variable({
 })
 webdriver = get_driver(is_headless=True)
 loader = cpt.Script(step, interval=3)
-print(type(loader.process(webdriver, variable=v1)))
-print(type(loader.process(webdriver, variable=v2)))
+s = cpt.Store(is_replace=True)
+print(type(loader.process(webdriver, variable=v1, store=s)))
+print(type(loader.process(webdriver, variable=v2, store=s)))
+print(s.data)
 webdriver.quit()
 ```
