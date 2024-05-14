@@ -1,5 +1,5 @@
 ---
-description: 任何标识符均会按照一定规则进行替换
+description: Any identifier will be replaced according to certain rules
 ---
 
 # 标识符

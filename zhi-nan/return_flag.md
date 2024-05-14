@@ -1,5 +1,5 @@
 ---
-description: '"__PRE_RETURN__"标识符并不能跳跃接受参数，且无法传递到condition中，为了解决这个问题，引入了return_flag'
+description: 'The identifier "_ PRE-RETURN__" cannot skip accepting parameters and cannot be passed to the condition. To address this issue, the return_flag is introduced.'
 ---
 
 # Return\_flag

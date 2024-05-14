@@ -1,12 +1,12 @@
 ---
-description: crawlipt包含了一些内置的action，以便你更好地与网页进行交互。同时你也可以添加自己的action方法，进行扩展。
+description: Crawlipt includes some built-in actions for better interaction with web pages. At the same time, you can also add your own action methods for expansion.
 ---
 
 # Action
 
 ### 内置的action方法
 
-所有的脚本方法（或别名）会自动映射到执行函数，所有的参数都是一一对应的，所有的WebElement元素均通过xpath进行定位。
+All script methods (or aliases) are automatically mapped to the execution function, and all parameters correspond one-to-one. All WebElement elements are located through xpath.
 
 | 方法                | 别名                  | 参数                                                                            | 返回值  | 备注                                           |
 | ----------------- | ------------------- | ----------------------------------------------------------------------------- | ---- | -------------------------------------------- |
@@ -51,23 +51,23 @@ description: crawlipt包含了一些内置的action，以便你更好地与网�
 
 ### 添加你自己的action
 
-在你添加自己的action方法前，建议你先学习一下selenium的基本使用
+Before adding your own action method, it is recommended that you first learn the basic usage of selenium
 
 {% embed url="https://www.selenium.dev/" %}
 
-参考下面的示例来添加你自己的action
+Refer to the following example to add your own action
 
 ```python
 import crawlipt as cpt
 from selenium.webdriver.remote.webdriver import WebDriver
 """
-（1）必须为一个可调用的函数或者类内的静态方法
-（2）必须使用check注解，来排除driver的语法检查，否则在语法检查阶段会抛出异常
-（3）所有的参数必须注明类型，否则无法通过语法检查
-（4）所有参数必须为python的基础类型
-（5）必须注明函数返回值，如果没有返回值，就返回None(-> None)
-（6）driver是固定变量，即必须包含(driver: WebDriver)这个参数
-（7）action方法的参数不能包含if、check、loop等关键词，否则它们不会生效
+(1) Must be a callable function or static method within a class
+(2) The check annotation must be used to exclude the syntax check of the driver, otherwise an exception will be thrown during the syntax check phase
+(3) All parameters must indicate the type, otherwise they cannot pass the syntax check
+(4) All parameters must be of the underlying type in Python
+(5) The function return value must be specified. If there is no return value, return None (->None)
+(6) Driver is a fixed variable, which means it must include the parameter (driver: WebDriver)
+(7) The parameters of the action method cannot contain keywords such as if, check, loop, etc., otherwise they will not take effect
 """
 @cpt.check(exclude="driver")  
 def myAction(driver: WebDriver, **args) -> None:
@@ -79,6 +79,6 @@ def myAction(driver: WebDriver, **args) -> None:
     # write your code
 
 
-# 按照如下方式添加脚本
+# Add the script as follows
 cpt.Script.add_action(myAction)
 ```

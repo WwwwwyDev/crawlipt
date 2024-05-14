@@ -1,5 +1,5 @@
 ---
-description: action和condition方法定义时，参数名应避开这些关键词（drvier、store、xpath、css需要显式定义才能生效）
+description: When defining action and condition methods, parameter names should avoid these keywords (drvier, store, xpath, css need to be explicitly defined to take effect)
 ---
 
 # 关键词

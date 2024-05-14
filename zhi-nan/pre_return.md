@@ -1,6 +1,6 @@
 ---
 description: >-
-  如果前面的action有一个返回值，则后面的action可以通过标识符"__PRE_RETURN__"来接收这个返回值，返回方和接收方的类型必须相同。注:"__PRE_RETURN__"标识符仅能在action间进行返回值传递
+  If the preceding action has a return value, the following action can receive this return value through the identifier "_PRE-RETURN__", and the types of the return and receiver must be the same. Note: The identifier "_ PRE-RETURN__" can only be used for return value transfer between actions.
 ---
 
 # Pre-Return
@@ -14,7 +14,7 @@ script = {
 	"next": {
 		"method": "input",
 		"xpath": "//*[@id=\"yDmH0d\"]/div[2]/div[2]/div/input",
-		"text": "__PRE_RETURN__" # text参数的值将是前面action的返回值
+		"text": "__PRE_RETURN__"  # The value of the text parameter will be the return value of the previous action
 	}
 }
 ```
@@ -34,12 +34,12 @@ step = [{
             "xpath": "//*[@id=\"trans-selection\"]/div/span",
         }]
 script = cpt.Script.generate(step)
-result = cpt.Script(script, interval=0.1)(webdriver) # 你可以使用一个变量去接收
+result = cpt.Script(script, interval=0.1)(webdriver)  # You can use a variable to receive
 ```
 
 ### 返回值延迟传播
 
-如果某个action有返回值，下面n个action返回值均为None，则该action的返回值，会一直传播到下面n个action，即下面的n个action均能接收到该返回值。直到有一个有返回值action出现，会终止该传播。
+If an action has a return value and all n actions below have a return value of None, the return value of that action will propagate all the way to the n actions below, meaning that all n actions below can receive the return value. Until an action with a return value appears, the propagation will be terminated.
 
 ```python
 script = {

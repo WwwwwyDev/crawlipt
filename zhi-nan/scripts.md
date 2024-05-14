@@ -1,5 +1,5 @@
 ---
-description: 本章介绍脚本的基本使用。脚本使用json格式定义，在各种语言中，你都可以很方便将它反序列化。
+description: This chapter introduces the basic use of scripts. The script is defined in JSON format and can be easily deserialized in various languages.
 ---
 
 # Script
@@ -9,21 +9,21 @@ description: 本章介绍脚本的基本使用。脚本使用json格式定义，
 ```python
 import crawlipt as cpt
 
-# 在编写阶段可以使用python内置字典类型进行编写
+# During the writing phase, Python built-in dictionary types can be used for writing
 script = { 
     "method": "redirect",
     "url": "https://www.baidu.com/",
     "next": {
-        "method": "input",  # 方法名
-        "xpath": "//*[@id=\"kw\"]", # 方法对应参数
-        "text": "百度贴吧", # 方法对应参数
-        "next": { # 下一个要执行的脚本
+        "method": "input",  # Method name
+        "xpath": "//*[@id=\"kw\"]", # Method corresponding parameters
+        "text": "百度贴吧", # Method corresponding parameters
+        "next": { # Next script to execute
             "method": "click",
             "xpath": "//*[@id=\"su\"]"
         }
     }
 }
-# 转换为了一个json字符串，可以将它存储在物理介质中
+# Convert to a JSON string, which can be stored in a physical medium
 script_json = cpt.Script.generate_json(script) 
 ```
 
@@ -33,12 +33,12 @@ script_json = cpt.Script.generate_json(script)
 
 ```python
 webdriver = getDriver()
-# 传入一个预先编写好的脚本，支持json字符串，python字典、列表类型
+# Pass in a pre written script that supports JSON strings, Python dictionaries, and list types
 loader = cpt.Script(script, interval=0.1)
-# 传入你配置好的selenium的webdriver对象进行执行
+# Pass in the webdriver object of your configured selenium for execution
 loader.process(webdriver) 
 # loader(webdriver) 
-# 你需要关闭你的webdriver在执行后
+# You need to close your webdriver after execution
 webdriver.quit()
 ```
 
@@ -62,7 +62,7 @@ webdriver.quit()
 
 ### 通过列表step方式编写脚本
 
-通过字典类型进行编写脚本，在action多的情况下，可能会导致嵌套字典过深，维护困难。使用列表方式编写脚本可以将嵌套流程变为串行流程。
+Writing scripts using dictionary types may result in nested dictionaries being too deep and difficult to maintain in situations with multiple actions. Writing scripts using a list approach can turn nested processes into serial processes.
 
 ```python
 step = [{
@@ -71,17 +71,17 @@ step = [{
         }, {
             "method": "input",
             "xpath": "//*[@id=\"editor-text\"]/div[1]/div[1]/div/div/div/div",
-            "text": "你好，世界",
+            "text": "Hello, World",
         }, {
             "method": "getInnerText",
             "xpath": "//*[@id=\"trans-selection\"]/div/span",
         }]
 
-# 你可以使用generate，将列表脚本变为字典脚本
+# You can use generate to convert the list script into a dictionary script
 script_dict = cpt.Script.generate(step)
-# 你可以使用generate_json，将列表脚本直接变为json字符串
+# You can use generate_JSON to directly convert the list script into a JSON string
 script_json = cpt.Script.generate_json(step)
-# 执行器也可以直接执行列表脚本
+# Executors can also directly execute list scripts
 loader = cpt.Script(step, interval=0.1)
 loader.process(webdriver) 
 ```

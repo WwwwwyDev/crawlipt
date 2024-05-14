@@ -1,5 +1,5 @@
 ---
-description: 阅读所有指南，以便于你更好地了解crawlipt
+description: Read all the guides so that you can better understand crawlipt
 ---
 
 # 指南

@@ -18,7 +18,7 @@ layout:
 
 ## crawlipt
 
-使用字符串脚本驱动selenium
+Using string scripts to drive selenium
 
 [![pypi](https://img.shields.io/pypi/v/crawlipt) ](https://pypi.python.org/pypi/crawlipt)![python](https://img.shields.io/badge/python-3.10.0+-blue) [![GitHub stars](https://img.shields.io/github/stars/WwwwwyDev/crawlipt)](https://github.com/WwwwwyDev/crawlipt/stargazers)
 
@@ -28,15 +28,15 @@ layout:
 
 ### 介绍
 
-在python中，你可以使用本框架去驱动selenium的webdriver，脚本使用json格式，以便你更好地跨语言操作以及以文本方式存储在物理介质中。
+In Python, you can use this framework to drive selenium's webdriver, with scripts in JSON format for better cross language operations and textual storage on physical media.
 
 ### 安装
 
-你可以使用 pip 或者 pip3 来安装crawlipt
+You can use pip or pip3 to install crawlelip
 
 `pip install crawlipt` 或 `pip3 install crawlipt`
 
-如果你已经安装了crawlipt，可能需要更新到最新版本
+If you have already installed crawlelip, you may need to update to the latest version
 
 `pip install --upgrade crawlipt`
 
@@ -77,21 +77,21 @@ def getDriver(is_headless=False):
 
 if __name__ == '__main__':
     webdriver = getDriver()
-    # 定义脚本，需要符合脚本规范
-    # 你也可以字典序列化成json字符串
+    # Define scripts that comply with script specifications
+    # You can also serialize dictionaries into JSON strings
     script = {
         "method": "redirect",
         "url": "https://www.baidu.com/",
         "next": {
             "method": "input",
             "xpath": "//*[@id=\"kw\"]",
-            "keyword": "和泉雾纱",
+            "keyword": "selenium",
             "next": {
                 "method": "click",
                 "xpath": "//*[@id=\"su\"]"
             }
         }
     }
-    # 执行脚本，可以直接传入json字符串，会自动解析并执行
+    # Execute the script, which can directly pass in the JSON string and will automatically parse and execute it
     cpt.Script(script, interval=2)(webdriver)
 ```

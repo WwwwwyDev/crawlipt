@@ -16,7 +16,7 @@ layout:
 
 ### 需要的依赖
 
-在你测试这些示例前，你需要安装一些依赖包
+Before you test these examples, you need to install some dependency packages
 
 ```sh
 pip install webdriver-manager
@@ -32,7 +32,7 @@ pip install --upgrade crawlist
 
 ### 配置selenium的webdriver
 
-在使用脚本前，你需要配置好自己的webdrvier。
+Before using the script, you need to configure your own webdrvier.
 
 ```python
 import random
@@ -76,7 +76,7 @@ def get_driver(is_headless=False):
 
 ### 百度搜索示例
 
-在百度中搜索“百度贴吧”
+Search for "Baidu Tieba" on Baidu
 
 ```python
 webdriver = get_driver()
@@ -86,7 +86,7 @@ script = {
     "next": {
         "method": "input",
         "xpath": "//*[@id=\"kw\"]",
-        "text": "百度贴吧",
+        "text": "Baidu Tieba",
         "next": {
             "method": "click",
             "xpath": "//*[@id=\"su\"]"
@@ -99,7 +99,7 @@ webdriver.quit()
 
 ### 使用百度翻译进行翻译
 
-使用百度翻译，并返回翻译结果
+Use Baidu Translate and return the translation result
 
 ```python
 webdriver = get_driver(is_headless=True)
@@ -109,7 +109,7 @@ step = [{
 }, {
     "method": "input",
     "xpath": "//*[@id=\"editor-text\"]/div[1]/div[1]/div/div/div/div",
-    "text": "你好，世界",
+    "text": "Hello, World",
 }, {
     "method": "getInnerText",
     "xpath": "//*[@id=\"trans-selection\"]/div/span",
@@ -173,7 +173,7 @@ webdriver.quit()
 
 ### 破解验证码
 
-添加自己的action方法使用ddddocr去破解验证码，并返回破解结果，传递到下一个action方法
+Add your own action method and use ddddocr to crack the verification code, return the cracking result, and pass it to the next action method.
 
 ```python
 webdriver = get_driver()
@@ -221,7 +221,7 @@ webdriver.quit()
 
 ### if条件判断
 
-通过if判断是否需要在输入框进行输入
+Use if to determine whether input is needed in the input box
 
 ```python
 webdriver = get_driver()
@@ -246,7 +246,7 @@ cpt.Script(step, interval=3)
 
 ### 计数器多层嵌套循环计算
 
-添加自己的condition方法进行加减计数，并返回最后的结果
+Add your own condition method for addition and subtraction counting, and return the final result
 
 ```python
 webdriver = get_driver()
@@ -305,7 +305,7 @@ webdriver.quit()
 
 ### 在百度进行多次搜索
 
-使用变量，进行百度搜索
+Using variables for Baidu search
 
 ```python
 webdriver = get_driver()
@@ -347,7 +347,7 @@ webdriver.quit()
 
 ### 利用store爬取网页列表信息
 
-使用crawlist爬取网页列表信息，并存储在store中
+Use crawlist to crawl web page list information and store it in the store
 
 ```python
 class MyStore(cpt.StoreBase):
@@ -403,7 +403,7 @@ webdriver.quit()
 
 ### 执行js代码
 
-执行js代码，返回任意类型，并结合使用内置store和variable
+Execute JavaScript code, return any type, and use built-in store and variable in combination
 
 ```python
 js_code1 = '''

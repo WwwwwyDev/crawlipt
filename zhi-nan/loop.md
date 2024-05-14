@@ -6,19 +6,19 @@ description: crawlipt提供了loop关键词来进行循环
 
 ### loop关键词
 
-当某一层中含有loop关键词，脚本会直接进入loop内的脚本，根据while或者cnt条件进行循环。循环终止后会跳过当前层，进入下一层执行下一层的action方法。
+When a layer contains the loop keyword, the script will directly enter the script within the loop and loop based on the while or cnt conditions. After the loop terminates, it will skip the current layer and enter the next layer to execute the action method of the next layer.
 
 ### loop条件
 
-loop关键词有while和cnt两个条件。while条件可以结合condition方法进行判断，如果condition方法为假，则终止循环。cnt条件是一个计数器，意味着脚本将循环cnt次。如果condition和cnt条件同时出现，则需要两个条件同时满足才会继续循环。
+The loop keyword has two conditions: while and cnt. The while condition can be evaluated in conjunction with the condition method. If the condition method is false, the loop is terminated. The CNT condition is a counter, which means the script will loop CNT times. If both condition and cnt conditions occur simultaneously, both conditions need to be met before the loop can continue.
 
 ### loop脚本
 
-loop的脚本需要在loop内使用script关键词传入，支持json、dict、list类型
+The loop script needs to be passed in using script keywords within the loop, supporting JSON, dict, and list types
 
 ### loop示例
 
-注：loop可以多次嵌套
+Note: Loop can be nested multiple times
 
 ```json
 step = [{

@@ -1,14 +1,14 @@
 ---
-description: crawlipt提供了if和check两个关键词结合condition方法来进行action方法执行前的逻辑判断
+description: Crawlipt provides two keywords, if and check, combined with the condition method to make logical judgments before executing the action method
 ---
 
 # Judge
 
 ### if关键词
 
-在action方法同层中添加if关键词，对应的判断逻辑会映射到对应的condition方法（或别名）中。
+Add the if keyword in the same layer of the action method, and the corresponding judgment logic will be mapped to the corresponding condition method (or alias).
 
-如果if条件不成立，则会跳过当前的action方法去执行下一个action方法，if关键词必须与method关键词同时出现
+If the if condition does not hold, the current action method will be skipped to execute the next action method, and the if keyword must appear simultaneously with the method keyword.
 
 ```json
 {
@@ -24,7 +24,7 @@ description: crawlipt提供了if和check两个关键词结合condition方法来�
 
 ### check关键词
 
-与if关键词不同的是，check关键词会在条件不满足时直接终止当前流程
+Unlike the if keyword, the check keyword will directly terminate the current process when the conditions are not met
 
 ```json
 {
@@ -37,7 +37,7 @@ description: crawlipt提供了if和check两个关键词结合condition方法来�
     }
 }
 
-//等价于
+//Equivalent to
 {
 	"check": {
 		"condition": "presence",

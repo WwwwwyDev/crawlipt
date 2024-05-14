@@ -1,12 +1,12 @@
 ---
-description: crawlipt提供了check和alias两个装饰器来控制action以及condition方法
+description: Crawlipt provides two decorators, check and alias, to control the action and condition methods
 ---
 
 # Annotation
 
 ### check 装饰器
 
-check装饰器用来对函数调用时进行参数检查，如果调用时参数不符合类型，则抛出异常。使用check装饰器可以增强脚本检查，以及避免脚本执行由于参数类型非法导致的错误。exclude参数意味着你将排除这几个参数的检查。注：Any类型将会自动排除检查。
+The check decorator is used to check the parameters during function calls. If the parameters do not match the type during the call, an exception is thrown. Using the check decorator can enhance script checking and avoid errors caused by illegal parameter types during script execution. The exclude parameter means that you will exclude the checks for these parameters. Note: Any type will automatically exclude checks.
 
 ```python
 import crawlipt as cpt
@@ -18,7 +18,7 @@ def A(a:str,b:int,c:float):
 
 ### alias 装饰器
 
-alias装饰器可以为你添加的action以及condition方法添加一个别名，脚本可以通过别名映射到函数。替换规则：不设置alias则直接进行方法名映射，如果方法名已经存在，则不会覆盖，添加失败；设置alias后，同时映射方法名和alias名，如果方法名和alias都存在，方法名不会覆盖，alias会覆盖。应尽可能避免重名情况出现。
+The alias decorator can add an alias to the action and condition methods you add, and the script can map to the function through the alias. Replacement rule: If alias is not set, method name mapping will be performed directly. If the method name already exists, it will not be overwritten and the addition will fail; After setting alias, map both method name and alias name. If both method name and alias exist, the method name will not be overwritten, and alias will be overwritten. Try to avoid duplicate names as much as possible.
 
 ```python
 import crawlipt as cpt

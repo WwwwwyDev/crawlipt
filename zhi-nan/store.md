@@ -1,12 +1,12 @@
 ---
-description: 存储器贯穿在脚本执行的全过程，帮助你在脚本执行过程中收集和存储信息
+description: Memory runs through the entire process of script execution, helping you collect and store information during the script execution process
 ---
 
 # Store
 
 ### 实现Store
 
-在使用Store前，你需要实现一个存储类，继承自StoreBase，里面定义你自己的存储变量。当你实现set方法时（也可以不实现），在脚本执行过程中，如果某个action方法的返回值不为空值，则会自动调用set方法，传入方法名以及对应的返回值。
+Before using Store, you need to implement a storage class that inherits from StoreBase and defines your own storage variables. When you implement the set method (or not), during script execution, if the return value of an action method is not null, the set method will be automatically called, with the method name and corresponding return value passed in.
 
 ```python
 import crawlipt as cpt
@@ -33,16 +33,16 @@ class Store(cpt.StoreBase):
             self.data[method] = [value]
 ```
 
-上述实现已在crawlipt中内置
+The above implementation is already built-in in crawlelip
 
 ### 内置Store对象
 
 ```python
 import crawlipt as cpt
 loader = cpt.Script(step, interval=3)
-s = cpt.Store(is_replace=False)  # 是否需要替换
+s = cpt.Store(is_replace=False)  # Do you need to replace it
 loader.process(webdriver, store=s)
-print(s.data)  # 会自动收集所有非空返回值
+print(s.data)  # Will automatically collect all non empty return values
 ```
 
 ### 使用Store
@@ -51,9 +51,9 @@ Store需要在你自己定义的[action](actions.md#tian-jia-ni-zi-ji-de-action)
 
 ```python
 """
-（1）变量名必须为store，否则无法传入
-（2）你需要排除store的语法检查，否则无法通过
-（3）store和driver均为特殊参数，在你自己实现的condition以及action中不能存在同名参数
+(1) The variable name must be store, otherwise it cannot be passed in
+(2) You need to exclude the syntax check of the store, otherwise it will not pass
+(3) Both store and driver are special parameters, and parameters with the same name cannot exist in your own implemented conditions and actions
 """
 @cpt.check(exclude=["driver", "store"]) 
 def myAction_or_myCondition(driver: WebDriver, store: MyStore, limit: int) -> Any:
@@ -64,7 +64,7 @@ cpt.Script.add_action(myAction_or_myCondition)
 step = [...]
 # cpt.Script.add_condition(myAction_or_myCondition)
 loader = cpt.Script(step, interval=1)
-# 在执行期间传入store
+# Pass in store during execution
 loader.process(webdriver=webdriver, store=store)
 print(store.data)
 webdriver.quit()
