@@ -12,7 +12,7 @@ layout:
     visible: true
 ---
 
-# 概述
+# Overview
 
 [![crawlipt](https://s2.loli.net/2024/05/10/PCcpwynVMmURjBv.png)](https://github.com/WwwwwyDev/crawlipt)
 
@@ -26,21 +26,21 @@ Using string scripts to drive selenium
 
 {% embed url="https://gitee.com/wu_wen_yi/crawlipt" %}
 
-### 介绍
+### introduce
 
-In Python, you can use this framework to drive selenium's webdriver, with scripts in JSON format for better cross language operations and textual storage on physical media.
+In Python, you can use this framework to drive selenium's webdriver, with scripts in JSON format for better cross language operations and textual storage on physical storage.
 
-### 安装
+### install
 
-You can use pip or pip3 to install crawlelip
+You can use pip or pip3 to install crawlipt
 
 `pip install crawlipt` 或 `pip3 install crawlipt`
 
-If you have already installed crawlelip, you may need to update to the latest version
+If you have already installed crawlipt, you may need to update to the latest version
 
 `pip install --upgrade crawlipt`
 
-### 快速开始
+### quickly start
 
 ```python
 from webdriver_manager.chrome import ChromeDriverManager

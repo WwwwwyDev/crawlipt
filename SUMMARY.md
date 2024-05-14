@@ -1,7 +1,7 @@
 # Table of contents
 
-* [概述](README.md)
-* [指南](zhi-nan/README.md)
+* [Overview](README.md)
+* [Guide](zhi-nan/README.md)
   * [Action](zhi-nan/actions.md)
   * [Script](zhi-nan/scripts.md)
   * [Condition](zhi-nan/condition.md)
