@@ -12,33 +12,35 @@ layout:
     visible: true
 ---
 
-# 🐻 Overview
+# 概述
 
-[![crawlist](https://s2.loli.net/2024/05/10/PCcpwynVMmURjBv.png)](https://github.com/WwwwwyDev/crawlipt)
+[![crawlipt](https://s2.loli.net/2024/05/10/PCcpwynVMmURjBv.png)](https://github.com/WwwwwyDev/crawlipt)
 
 ## crawlipt
 
-The script for selenium in python
+使用字符串脚本驱动selenium
 
 [![pypi](https://img.shields.io/pypi/v/crawlipt) ](https://pypi.python.org/pypi/crawlipt)![python](https://img.shields.io/badge/python-3.10.0+-blue) [![GitHub stars](https://img.shields.io/github/stars/WwwwwyDev/crawlipt)](https://github.com/WwwwwyDev/crawlipt/stargazers)
 
 {% embed url="https://github.com/WwwwwyDev/crawlipt" %}
 
-### introduction
+{% embed url="https://gitee.com/wu_wen_yi/crawlipt" %}
 
-You can use Crawlipt to driver the selenium by script in python.The script adopts JSON format for better cross language operations and physical storage.
+### 介绍
 
-### installing
+在python中，你可以使用本框架去驱动selenium的webdriver，脚本使用json格式，以便你更好地跨语言操作以及以文本方式存储在物理介质中。
 
-You can use pip or pip3 to install the crawlipt
+### 安装
 
-`pip install crawlipt` or `pip3 install crawlipt`
+你可以使用 pip 或者 pip3 来安装crawlipt
 
-If you have already installed crawlipt, you may need to update to the latest version
+`pip install crawlipt` 或 `pip3 install crawlipt`
+
+如果你已经安装了crawlipt，可能需要更新到最新版本
 
 `pip install --upgrade crawlipt`
 
-### quickly start
+### 快速开始
 
 ```python
 from webdriver_manager.chrome import ChromeDriverManager
@@ -75,8 +77,8 @@ def getDriver(is_headless=False):
 
 if __name__ == '__main__':
     webdriver = getDriver()
-    # Define scripts
-    # You can also deserialize JSON strings into a dictionary
+    # 定义脚本，需要符合脚本规范
+    # 你也可以字典序列化成json字符串
     script = {
         "method": "redirect",
         "url": "https://www.baidu.com/",
@@ -90,6 +92,6 @@ if __name__ == '__main__':
             }
         }
     }
-    # Execute script
+    # 执行脚本，可以直接传入json字符串，会自动解析并执行
     cpt.Script(script, interval=2)(webdriver)
 ```

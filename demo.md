@@ -12,24 +12,27 @@ layout:
     visible: true
 ---
 
-# 🐻‍❄️ Demo
+# 示例
 
-### Require
+### 需要的依赖
 
-Before you run the demo, you need to install some packages.
+在你测试这些示例前，你需要安装一些依赖包
 
 ```sh
 pip install webdriver-manager
 pip install ddddocr
+pip install --upgrade crawlist
 ```
 
 {% embed url="https://github.com/SergeyPirogov/webdriver_manager" %}
 
 {% embed url="https://github.com/sml2h3/ddddocr" %}
 
-### Definition of driver
+{% embed url="https://github.com/WwwwwyDev/crawlist" %}
 
-Before using the script, you need to define your own webdriver.
+### 配置selenium的webdriver
+
+在使用脚本前，你需要配置好自己的webdrvier。
 
 ```python
 import random
@@ -40,6 +43,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 from selenium import webdriver as wd
 from selenium.webdriver.chrome.service import Service
 import crawlipt as cpt
+import crawlist as cl
 import ddddocr as docr
 
 def get_driver(is_headless=False):
@@ -70,9 +74,9 @@ def get_driver(is_headless=False):
     return webdriver
 ```
 
-### demo1
+### 百度搜索示例
 
-Search in baidu
+在百度中搜索“百度贴吧”
 
 ```python
 webdriver = get_driver()
@@ -93,9 +97,9 @@ cpt.Script(script, interval=0.1)(webdriver)
 webdriver.quit()
 ```
 
-### demo2
+### 使用百度翻译进行翻译
 
-Translate using Baidu Translate
+使用百度翻译，并返回翻译结果
 
 ```python
 webdriver = get_driver(is_headless=True)
@@ -116,9 +120,7 @@ print(result)
 webdriver.quit()
 ```
 
-### demo3
-
-Automatic problem-solving
+### 自动做题
 
 ```python
 webdriver = get_driver()
@@ -143,9 +145,7 @@ cpt.Script(scripts, interval=1)(webdriver)
 webdriver.quit()
 ```
 
-### demo4
-
-The application of "\_\_ PRE RETURN\_\_"
+### \_\_ PRE RETURN\_\_的使用
 
 ```python
 webdriver = get_driver()
@@ -171,13 +171,14 @@ cpt.Script(scripts, interval=1)(webdriver)
 webdriver.quit()
 ```
 
-### demo5
+### 破解验证码
 
-Add your own action to crack the verification code
+添加自己的action方法使用ddddocr去破解验证码，并返回破解结果，传递到下一个action方法
 
 ```python
 webdriver = get_driver()
 @cpt.check(exclude="driver")
+@cpt.alias("captcha")
 def crackCaptcha(driver: WebDriver, xpath: str) -> str:
     """
     Handling keyboard input events
@@ -203,7 +204,7 @@ step = [{
     "xpath": "//*[@id=\"login_form\"]/div[2]/div[2]/div[2]/input",
     "text": "password",
 },{
-    "method": "crackCaptcha",
+    "method": "crackCaptcha",  # or alias: "method": "captcha"
     "xpath": "//*[@id=\"checkcode2\"]",
 },{
     "method": "input",
@@ -215,5 +216,225 @@ step = [{
 }]
 scripts = cpt.Script.generate(step)
 cpt.Script(scripts, interval=3)(webdriver)
+webdriver.quit()
+```
+
+### if条件判断
+
+通过if判断是否需要在输入框进行输入
+
+```python
+webdriver = get_driver()
+step = [{
+    "method": "redirect",
+    "url": "https://www.baidu.com/",
+}, {
+    "method": "input",
+    "xpath": "//*[@id=\"kw\"]",
+    "text": "your search text",
+    "if": {
+        "condition": "presence",
+        "xpath": "//*[@id=\"su\"]"
+    }
+}, {
+    "method": "input",
+    "xpath": "//*[@id=\"kw\"]",
+    "text": "your search text",
+}]
+cpt.Script(step, interval=3)
+```
+
+### 计数器多层嵌套循环计算
+
+添加自己的condition方法进行加减计数，并返回最后的结果
+
+```python
+webdriver = get_driver()
+
+@cpt.check(exclude="driver")
+@cpt.alias("check")
+def checkNum(driver: WebDriver, xpath: str) -> bool:
+    """
+    your doc
+    :param driver: selenium webdriver
+    :param xpath: the xpath of element
+    """
+    element = driver.find_element(By.XPATH, xpath)
+    value = int(element.get_attribute("value"))
+    if value > 10:
+        return False
+    else:
+        return True
+
+cpt.Script.add_condition(checkNum)
+
+step = [{
+    "method": "redirect",
+    "url": "https://www.bchrt.com/tools/click-counter/",
+}, {
+    "loop": {
+        "while": {
+            "condition": "checkNum",  # or alias: "condition": "check",
+            "xpath": "//*[@id=\"count\"]"
+        },
+        "script": [{
+            "loop": {
+                "cnt": 5,
+                "script": {
+                    "method": "click",
+                    "xpath": "//*[@id=\"addbtn\"]",
+                },
+            }
+        },
+            {
+                "method": "click",
+                "xpath": "//*[@id=\"subbtn\"]",
+            }
+        ]
+    }
+}, {
+    "method": "getAttribute",
+    "xpath": "//*[@id=\"count\"]",
+    "name": "value"
+}]
+json_str = cpt.Script.generate_json(step)
+res = cpt.Script(json_str)(webdriver)
+print(res)
+webdriver.quit()
+```
+
+### 在百度进行多次搜索
+
+使用变量，进行百度搜索
+
+```python
+webdriver = get_driver()
+step = [{
+    "method": "redirect",
+    "url": "https://www.baidu.com/",
+}, {
+    "method": "input",
+    "xpath": "//*[@id=\"kw\"]",
+    "text": "__v-searchKey__",
+    "if": {
+        "condition": "presence",
+        "xpath": "__v-button_xpath__"
+    }
+}, {
+    "method": "clear"
+}]
+v1 = cpt.Variable({
+    "searchKey": "hello",
+    "button_xpath": "//*[@id=\"su\"]"
+})
+v2 = cpt.Variable({
+    "searchKey": "world",
+    "button_xpath": "//*[@id=\"su\"]"
+})
+v3 = cpt.Variable({
+    "searchKey": "world",
+    "button_xpath": "//*[@id=\"su_no_existence\"]"
+})
+loader = cpt.Script(step, interval=3)
+loader.process(webdriver=webdriver,
+               variable=v1)
+loader.process(webdriver=webdriver,
+               variable=v2)
+loader.process(webdriver=webdriver,
+               variable=v3)
+webdriver.quit()
+```
+
+### 利用store爬取网页列表信息
+
+使用crawlist爬取网页列表信息，并存储在store中
+
+```python
+class MyStore(cpt.StoreBase):
+    def __init__(self):
+        self.data = []
+
+@cpt.check(exclude=["driver", "store"])
+def crawl_baidu_list(driver: WebDriver, store: MyStore, limit: int) -> None:
+    if not driver:
+        return None
+    pager = MyPager(button_selector=cl.XpathWebElementSelector('//*[@id="page"]/div/a/span'),
+                    webdriver=driver, interval=2)
+    selector = cl.CssSelector(pattern="#content_left > div")
+    analyzer = cl.AnalyzerPrettify(pager, selector)
+    for e in analyzer(limit):
+        store.data.append(e)
+
+cpt.Script.add_action(crawl_baidu_list)
+webdriver = get_driver(is_headless=True)
+step = [{
+    "method": "redirect",
+    "url": "https://www.baidu.com/",
+}, {
+    "method": "input",
+    "xpath": "//*[@id=\"kw\"]",
+    "text": "__v-keyword__",
+}, {
+    "method": "click",
+    "xpath": "//*[@id=\"su\"]"
+}, {
+    "method": "crawl_baidu_list",
+    "limit": "__v-limit__",
+},{
+    "method": "clear"
+}]
+v1 = cpt.Variable({
+    "limit": 20,
+    "keyword": "和泉雾纱"
+})
+store1 = MyStore()
+v2 = cpt.Variable({
+    "limit": 20,
+    "keyword": "python"
+})
+store2 = MyStore()
+loader = cpt.Script(step, interval=1)
+loader.process(webdriver=webdriver, store=store1, variable=v1)
+print(store1.data)
+loader.process(webdriver=webdriver, store=store2, variable=v2)
+print(store2.data)
+webdriver.quit()
+```
+
+### 执行js代码
+
+执行js代码，返回任意类型，并结合使用内置store和variable
+
+```python
+js_code1 = '''
+             var element = document.querySelector("body > div > main > div.row.justify-content-center.pt-2.pb-3.-bg-selenium-cyan > div > div > h2");
+             return element.innerText;
+            '''
+js_code2 = '''
+             return 1
+            '''
+step = [{
+    "method": "redirect",
+    "url": "https://www.selenium.dev/",
+}, {
+    "method": "execute",
+    "js": "__v-js_code__",
+}, {
+    "method": "log",
+    "msg": "__PRE_RETURN__"
+}]
+
+v1 = cpt.Variable({
+    "js_code": js_code1,
+})
+v2 = cpt.Variable({
+    "js_code": js_code2,
+})
+webdriver = get_driver(is_headless=True)
+loader = cpt.Script(step, interval=3)
+s = cpt.Store(is_replace=True)
+print(type(loader.process(webdriver, variable=v1, store=s)))
+print(type(loader.process(webdriver, variable=v2, store=s)))
+print(s.data)
 webdriver.quit()
 ```
