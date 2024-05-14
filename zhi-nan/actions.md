@@ -46,7 +46,7 @@ description: crawlipt包含了一些内置的action，以便你更好地与网�
 | html              | window.html       | None                                                                       | str                                    | 返回当前driver的page\_source                      |
 | log               | None              | msg: Any                                                                   | None                                   | 在终端打印msg信息                                   |
 | interval          | None              | num: str \| int                                                            | None                                   | 显式等待num秒时间                                   |
-| intervalRandom    | interval.random   | num: str \| int                                                            | None                                   | 显示等待\[num/2, num]秒时间                         |
+| intervalRandom    | interval.random   | num: str \| int                                                            | None                                   | 显式等待\[num/2, num]秒时间                         |
 | execute           | None              | js: str                                                                    | Any                                    | 执行js code                                    |
 
 ### 添加你自己的action
