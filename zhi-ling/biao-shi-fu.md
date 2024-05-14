@@ -2,12 +2,11 @@
 description: Any identifier will be replaced according to certain rules
 ---
 
-# 标识符
+# Identifier
 
-| 标识符                             | 说明              |
-| ------------------------------- | --------------- |
-| \_\_PRE\_RETURN\_\_             | 接受最近action方法返回值 |
-| \_\_rf-{your return \_flag}\_\_ | 接受return\_flag  |
-| \_\_v-(your variable}\_\_       | 接受variable      |
-| \_\_not-(your condition}\_\_    | 将condition结果取反  |
-
+| identifier                      | introduction                                        |
+| ------------------------------- | --------------------------------------------------- |
+| \_\_PRE\_RETURN\_\_             | Accept the return value of the recent action method |
+| \_\_rf-{your return \_flag}\_\_ | Accept return\_flag                                 |
+| \_\_v-(your variable}\_\_       | Accept variable                                     |
+| \_\_not-(your condition}\_\_    | Invert the condition result                         |

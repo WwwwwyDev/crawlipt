@@ -1,18 +1,21 @@
 ---
-description: Crawlipt includes some built-in conditions so that you can make logical judgments when interacting with web pages. At the same time, you can also add your own condition method for extension.
+description: >-
+  Crawlipt includes some built-in conditions so that you can make logical
+  judgments when interacting with web pages. At the same time, you can also add
+  your own condition method for extension.
 ---
 
 # Condition
 
-### 内置的condition方法
+### Built-in condition method
 
-与action方法不同，condition方法的返回值均为bool类型，你可以在[while](loop.md#loop-tiao-jian)、[if](judge.md#if-guan-jian-ci)、[check](judge.md#check-guan-jian-ci)中使用它。
+Unlike the action method, the return value of the condition method is of type bool, which you can use in [while](loop.md#loop-tiao-jian), [if](judge.md#if-guan-jian-ci), and [check](judge.md#check-guan-jian-ci).
 
-<table><thead><tr><th width="122">方法</th><th>别名</th><th>参数</th><th>备注</th></tr></thead><tbody><tr><td>presence_of_element_located</td><td>presence</td><td><p>xpath: str, </p><p>wait: float = 1(最长等待xpath对应元素出现时间)</p></td><td>判断xpath对应单个元素是否在wait时间内出现在dom结构中</td></tr><tr><td>presence_of_all_elements_located</td><td>presences</td><td><p>xpath: str, </p><p>wait: float = 1</p></td><td>判断xpath对应所有元素是否在wait时间内出现在dom结构中</td></tr><tr><td>visibility_of_element_located</td><td>visibility</td><td><p>xpath: str, </p><p>wait: float = 1</p></td><td>判断xpath对应单个元素是否在wait时间内出现在dom结构中，并且宽和高均不为0</td></tr><tr><td>invisibility_of_element_located</td><td>invisibility</td><td><p>xpath: str, </p><p>wait: float = 1</p></td><td>判断xpath对应单个元素是否在wait时间内出现在dom结构中，并且宽和高均为0</td></tr><tr><td>frame_to_be_available_and_switch_to_it</td><td>None</td><td><p>xpath: str, </p><p>wait: float = 1</p></td><td>判断xpath对应的frame是否能在wait时间内被切入</td></tr><tr><td>element_to_be_clickable</td><td>clickable</td><td><p>xpath: str, </p><p>wait: float = 1</p></td><td>判断xpath对应的单个元素是否能在wait时间内被点击</td></tr><tr><td>element_located_to_be_selected</td><td>selected</td><td><p>xpath: str, </p><p>wait: float = 1</p></td><td>判断xpath对应的单个元素是否能在wait时间内被选择</td></tr><tr><td>text_to_be_present_in_element</td><td>None</td><td><p>xpath: str, </p><p>text: str, </p><p>wait: float = 1</p></td><td>判断xpath对应的单个元素是否能在wait时间内出现text文本内容</td></tr><tr><td>text_to_be_present_in_element_value</td><td>None</td><td><p>xpath: str, </p><p>value: str, </p><p>wait: float = 1</p></td><td>判断xpath对应的单个元素的value中是否能在wait时间内出现value文本内容</td></tr><tr><td>alert_is_present</td><td>None</td><td>wait: float = 1</td><td>判断是否有alert弹出</td></tr></tbody></table>
+<table><thead><tr><th width="122">method</th><th>alias</th><th>parms</th><th>notes</th></tr></thead><tbody><tr><td>presence_of_element_located</td><td>presence</td><td><p>xpath: str,</p><p>wait: float = 1(The longest waiting time for the appearance of the corresponding element in xpath)</p></td><td>Determine whether a single element corresponding to xpath appears in the dom structure within the wait time</td></tr><tr><td>presence_of_all_elements_located</td><td>presences</td><td><p>xpath: str,</p><p>wait: float = 1</p></td><td>Determine whether all elements corresponding to xpath appear in the dom structure within the wait time</td></tr><tr><td>visibility_of_element_located</td><td>visibility</td><td><p>xpath: str,</p><p>wait: float = 1</p></td><td>Determine whether a single element corresponding to xpath appears in the dom structure within the wait time, and whether the width and height are not 0</td></tr><tr><td>invisibility_of_element_located</td><td>invisibility</td><td><p>xpath: str,</p><p>wait: float = 1</p></td><td>Determine whether a single element corresponding to xpath appears in the dom structure within the wait time, and whether its width and height are both 0</td></tr><tr><td>frame_to_be_available_and_switch_to_it</td><td>None</td><td><p>xpath: str,</p><p>wait: float = 1</p></td><td>Determine whether the frame corresponding to xpath can be cut in within the wait time</td></tr><tr><td>element_to_be_clickable</td><td>clickable</td><td><p>xpath: str,</p><p>wait: float = 1</p></td><td>Determine whether a single element corresponding to xpath can be clicked within the wait time</td></tr><tr><td>element_located_to_be_selected</td><td>selected</td><td><p>xpath: str,</p><p>wait: float = 1</p></td><td>Determine whether a single element corresponding to xpath can be selected within the wait time</td></tr><tr><td>text_to_be_present_in_element</td><td>None</td><td><p>xpath: str,</p><p>text: str,</p><p>wait: float = 1</p></td><td>Determine whether a single element corresponding to xpath can contain text content within the wait time</td></tr><tr><td>text_to_be_present_in_element_value</td><td>None</td><td><p>xpath: str,</p><p>value: str,</p><p>wait: float = 1</p></td><td>Determine whether the value text content can appear within the wait time in the value of a single element corresponding to xpath</td></tr><tr><td>alert_is_present</td><td>None</td><td>wait: float = 1</td><td>Determine if there is an alert pop-up</td></tr></tbody></table>
 
-### fail\_script关键词
+### 'fail\_script' keyword
 
-在condition中如果含有fail\_script关键词，则在condition失败后会执行该脚本
+If the condition contains the keyword 'fail script', the script will be executed after the condition fails
 
 ```json
 {
@@ -21,15 +24,15 @@ description: Crawlipt includes some built-in conditions so that you can make log
         "xpath": "//*[@id=\"main-metro\"]/ul/li[3]/a[3]",
         "fail_script": [{
             "method": "log",
-            "msg": "[fail] 登录失败"
+            "msg": "[fail] login failed"
         }]
     }
 }
 ```
 
-### 逻辑取反
+### Logical inversion
 
-使用\_\_not-{your condition}\_\_指令可以对condition结果进行取反
+The use of the \_not-{your condition}\_\_ instruction can negate the condition result
 
 ```json
 {
@@ -38,13 +41,13 @@ description: Crawlipt includes some built-in conditions so that you can make log
         "xpath": "//*[@id=\"main-metro\"]/ul/li[3]/a[3]",
         "fail_script": [{
             "method": "log",
-            "msg": "[fail] 登录失败"
+            "msg": "[fail] login failed"
         }]
     }
 }
 ```
 
-### 添加你自己的condition
+### Add your own conditions
 
 Before adding your own action method, it is recommended that you first learn the basic usage of selenium
 

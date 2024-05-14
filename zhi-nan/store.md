@@ -1,10 +1,12 @@
 ---
-description: Memory runs through the entire process of script execution, helping you collect and store information during the script execution process
+description: >-
+  Memory runs through the entire process of script execution, helping you
+  collect and store information during the script execution process
 ---
 
 # Store
 
-### 实现Store
+### Implement Store
 
 Before using Store, you need to implement a storage class that inherits from StoreBase and defines your own storage variables. When you implement the set method (or not), during script execution, if the return value of an action method is not null, the set method will be automatically called, with the method name and corresponding return value passed in.
 
@@ -33,9 +35,9 @@ class Store(cpt.StoreBase):
             self.data[method] = [value]
 ```
 
-The above implementation is already built-in in crawlelip
+The above implementation is already built-in in crawlipt
 
-### 内置Store对象
+### Built-in Store object
 
 ```python
 import crawlipt as cpt
@@ -45,9 +47,9 @@ loader.process(webdriver, store=s)
 print(s.data)  # Will automatically collect all non empty return values
 ```
 
-### 使用Store
+### Using Store
 
-Store需要在你自己定义的[action](actions.md#tian-jia-ni-zi-ji-de-action)或者[condition](condition.md#tian-jia-ni-zi-ji-de-condition)中作为参数传入
+Store needs to be passed as a parameter in your own defined [action](actions.md#tian-jia-ni-zi-ji-de-action) or [condition](condition.md#tian-jia-ni-zi-ji-de-condition)
 
 ```python
 """
@@ -69,4 +71,3 @@ loader.process(webdriver=webdriver, store=store)
 print(store.data)
 webdriver.quit()
 ```
-

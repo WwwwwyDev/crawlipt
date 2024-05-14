@@ -1,12 +1,14 @@
 ---
-description: 'The identifier "_ PRE-RETURN__" cannot skip accepting parameters and cannot be passed to the condition. To address this issue, the return_flag is introduced.'
+description: >-
+  The identifier "_ PRE-RETURN__" cannot skip accepting parameters and cannot be
+  passed to the condition. To address this issue, the return_flag is introduced.
 ---
 
 # Return\_flag
 
-### return\_flag关键词
+### 'return\_flag' keyword
 
-如果你后面的action方法或condition判断需要接收前面的某个action方法或condition判断的返回值，但是中间有action方法返回了返回值，导致无法接受，则需要配合return\_flag关键词以及标识符"\_\_rf-{your return\_flag}\_\_"来接受
+If your subsequent action method or condition judgment needs to receive the return value of a previous action method or condition judgment, but there is an action method in the middle that returns the return value, which cannot be accepted, then you need to cooperate with the return\_flag keyword and identifier "\_\_ rf - {your return\_flag} \_\_" to accept it.
 
 ```json
 script = {

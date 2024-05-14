@@ -1,12 +1,14 @@
 ---
-description: Variables can enhance the flexibility and scalability of scripts, and can dynamically control the running of scripts
+description: >-
+  Variables can enhance the flexibility and scalability of scripts, and can
+  dynamically control the running of scripts.
 ---
 
 # Variable
 
-### 脚本示例
+### Script Example
 
-Variables can be set in any parameter of the script (except for keywords such as "method", "next", "if", "check", "condition", and "loop")
+Variables can be set in any parameter of the script (except for keywords such as "method", "next", "if", "check", "condition", and "loop").
 
 ```json
 step = [{
@@ -25,11 +27,11 @@ step = [{
 }]
 ```
 
-在编写脚本变量时，需要使用标识符"\_\_v-{your variable}\_\_"。否则在语法检查时会被判断为普通参数处理。
+When writing script variables, the identifier "\_v - {your variable} \_\_" needs to be used. Otherwise, it will be judged as a normal parameter processing during syntax checking.
 
-### 实现你自己的variable对象
+### Implement your own variable object
 
-你需要继承VariableBase对象，并且实现get、\_\_contains\_\_ 这两个方法
+You need to inherit the VariableBase object and implement the get and \_\_ contains\_\_ methods.
 
 ```python
 import crawlipt as cpt
@@ -49,9 +51,9 @@ class Variable(cpt.VariableBase):
         return key in self.values
 ```
 
-The above implementation is already built-in in crawlipt
+The above implementation is already built-in in crawlipt.
 
-### 内置variable对象
+### Built-in variable object
 
 The variables in the script will be automatically replaced during execution, and you can create a built-in Variable object in crawlipt with initialization parameters in dictionary or JSON format strings. The dictionary needs to correspond your variable names and values one-to-one, and during execution, it will replace the variable names in the script with the variable values you set.
 

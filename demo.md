@@ -12,9 +12,9 @@ layout:
     visible: true
 ---
 
-# 示例
+# Example
 
-### 需要的依赖
+### Required dependencies
 
 Before you test these examples, you need to install some dependency packages
 
@@ -30,7 +30,7 @@ pip install --upgrade crawlist
 
 {% embed url="https://github.com/WwwwwyDev/crawlist" %}
 
-### 配置selenium的webdriver
+### Configure webdriver for selenium
 
 Before using the script, you need to configure your own webdrvier.
 
@@ -74,7 +74,7 @@ def get_driver(is_headless=False):
     return webdriver
 ```
 
-### 百度搜索示例
+### Baidu search example
 
 Search for "Baidu Tieba" on Baidu
 
@@ -97,7 +97,7 @@ cpt.Script(script, interval=0.1)(webdriver)
 webdriver.quit()
 ```
 
-### 使用百度翻译进行翻译
+### Translate using Baidu Translate
 
 Use Baidu Translate and return the translation result
 
@@ -120,7 +120,7 @@ print(result)
 webdriver.quit()
 ```
 
-### 自动做题
+### Automatic problem-solving
 
 ```python
 webdriver = get_driver()
@@ -145,7 +145,7 @@ cpt.Script(scripts, interval=1)(webdriver)
 webdriver.quit()
 ```
 
-### \_\_ PRE RETURN\_\_的使用
+### Using '\_\_PRE RETURN\_\_'
 
 ```python
 webdriver = get_driver()
@@ -171,7 +171,7 @@ cpt.Script(scripts, interval=1)(webdriver)
 webdriver.quit()
 ```
 
-### 破解验证码
+### Cracking verification codes
 
 Add your own action method and use ddddocr to crack the verification code, return the cracking result, and pass it to the next action method.
 
@@ -219,7 +219,7 @@ cpt.Script(scripts, interval=3)(webdriver)
 webdriver.quit()
 ```
 
-### if条件判断
+### 'if' condition judgment
 
 Use if to determine whether input is needed in the input box
 
@@ -244,7 +244,7 @@ step = [{
 cpt.Script(step, interval=3)
 ```
 
-### 计数器多层嵌套循环计算
+### Counter multi-layer nested loop calculation
 
 Add your own condition method for addition and subtraction counting, and return the final result
 
@@ -303,7 +303,7 @@ print(res)
 webdriver.quit()
 ```
 
-### 在百度进行多次搜索
+### Conduct multiple searches on Baidu
 
 Using variables for Baidu search
 
@@ -345,7 +345,7 @@ loader.process(webdriver=webdriver,
 webdriver.quit()
 ```
 
-### 利用store爬取网页列表信息
+### Using the store to crawl web page list information
 
 Use crawlist to crawl web page list information and store it in the store
 
@@ -401,7 +401,7 @@ print(store2.data)
 webdriver.quit()
 ```
 
-### 执行js代码
+### Execute JavaScript code
 
 Execute JavaScript code, return any type, and use built-in store and variable in combination
 

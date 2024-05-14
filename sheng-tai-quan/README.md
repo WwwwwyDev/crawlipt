@@ -1,7 +1,7 @@
 ---
-description: 提交issue至github来完善生态圈
+description: Submit an issue to Github to improve the ecosystem
 ---
 
-# 生态圈
+# ecosphere
 
 {% embed url="https://github.com/WwwwwyDev/crawlipt/issues/18" %}
