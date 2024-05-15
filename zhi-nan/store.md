@@ -12,7 +12,8 @@ description: 存储器贯穿在脚本执行的全过程，帮助你在脚本执�
 import crawlipt as cpt
 class Store(cpt.StoreBase):
 
-    def __init__(self, is_replace=False):
+    @check
+    def __init__(self, is_replace: bool = False):
         """
         :param is_replace: need replace the value of method or not
         """
@@ -69,4 +70,3 @@ loader.process(webdriver=webdriver, store=store)
 print(store.data)
 webdriver.quit()
 ```
-
