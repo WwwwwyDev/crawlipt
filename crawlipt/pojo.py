@@ -46,7 +46,8 @@ class StoreBase:
 
 class Store(StoreBase):
 
-    def __init__(self, is_replace=False):
+    @check
+    def __init__(self, is_replace: bool = False):
         """
         :param is_replace: need replace the value of method or not
         """
