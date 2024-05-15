@@ -1,5 +1,5 @@
 ---
-description: crawlipt提供了loop关键词来进行循环
+description: Crawlipt provides the "loop" keyword for looping
 ---
 
 # Loop

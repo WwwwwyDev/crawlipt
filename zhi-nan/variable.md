@@ -31,7 +31,7 @@ When writing script variables, the identifier "\_v - {your variable} \_\_" needs
 
 ### Implement your own variable object
 
-You need to inherit the VariableBase object and implement the get and \_\_ contains\_\_ methods.
+You need to inherit the VariableBase object and implement the "get" and "\_\_ contains\_\_" methods.
 
 ```python
 import crawlipt as cpt
