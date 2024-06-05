@@ -15,7 +15,7 @@ from setuptools import find_packages, setup, Command
 NAME = 'crawlipt'
 DESCRIPTION = 'The script for selenium in python'
 URL = 'https://github.com/WwwwwyDev/crawlipt'
-EMAIL = 'wwy20001014@foxmail.com'
+EMAIL = 'wwwwwydev@gmail.com'
 AUTHOR = 'WwwwwyDev'
 REQUIRES_PYTHON = '>=3.10.0'
 VERSION = '0.1.4'

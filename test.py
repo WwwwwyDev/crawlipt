@@ -433,6 +433,40 @@ class TestCase(unittest.TestCase):
         print(s.data)
         webdriver.quit()
 
+    def test09(self):
+        step =[
+            {
+                "method": "redirect",
+                "url": "https://sou.pcauto.com.cn/?tab=auto_index&q="
+            },
+            {
+                "method": "input",
+                "xpath": "//*[@id=\"0\"]",
+                "text": "半导体",
+            },
+            {
+                "method": "enter",
+                "xpath": "//*[@id=\"0\"]",
+            },
+            {
+                "method": "interval",
+                "num": 10
+            },
+            {
+                "method": "click",
+                "xpath": "/html/body/div[4]/div/div/div[2]/div[2]/div/div[1]/div/div[2]/div/ul/li[2]/a"
+            },
+            {
+                "method": "interval",
+                "num": 10
+            },
+
+        ]
+        webdriver = get_driver(is_headless=False)
+        loader = cpt.Script(step, interval=3)
+        loader.process(webdriver)
+        webdriver.quit()
+
 
 if __name__ == '__main__':
     unittest.main()

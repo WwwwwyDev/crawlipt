@@ -3,6 +3,8 @@ import time
 import json
 from inspect import signature
 from typing import Any
+
+from selenium.common import WebDriverException
 from selenium.webdriver.remote.webdriver import WebDriver
 from crawlipt.annotation import check, ParamTypeError
 from crawlipt.action import Action
@@ -377,7 +379,12 @@ class ScriptProcess:
                                               store=store,
                                               interval=interval,
                                               wait=wait)
-            current_return = Script.ACTIONS[method](**temp_args)
+            current_return = None
+            try:
+                current_return = Script.ACTIONS[method](**temp_args)
+            except WebDriverException as e:
+                if "missing or invalid columnNumber" not in e.msg:
+                    raise e
             if isinstance(store, StoreBase) and current_return:
                 store.set(method=method, value=current_return)
             return_flag = script.get("return_flag")
