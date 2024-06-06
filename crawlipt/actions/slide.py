@@ -15,6 +15,8 @@ class Slide:
         :param position: The x, y position
         """
         assert len(position) == 2
+        for element in position:
+            assert isinstance(element, int)
         slider = driver.find_element(By.XPATH, xpath)
         x, y = position
         start_x = slider.location["x"]

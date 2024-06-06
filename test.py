@@ -434,38 +434,20 @@ class TestCase(unittest.TestCase):
         webdriver.quit()
 
     def test09(self):
-        step =[
+        step = [
             {
                 "method": "redirect",
-                "url": "https://sou.pcauto.com.cn/?tab=auto_index&q="
+                "url": "http://v.yalijuda.com:32723/%e5%9b%be%e7%89%87%e5%8e%8b%e7%bc%a9-%e5%89%af%e6%9c%ac-2/",
             },
             {
-                "method": "input",
-                "xpath": "//*[@id=\"0\"]",
-                "text": "半导体",
-            },
-            {
-                "method": "enter",
-                "xpath": "//*[@id=\"0\"]",
-            },
-            {
-                "method": "interval",
-                "num": 10
-            },
-            {
-                "method": "click",
-                "xpath": "/html/body/div[4]/div/div/div[2]/div[2]/div/div[1]/div/div[2]/div/ul/li[2]/a"
-            },
-            {
-                "method": "interval",
-                "num": 10
-            },
-
+                "method": "upload",
+                "xpath": "//*[@id=\"filer_input\"]",
+                "paths": ["./1.png"]
+            }
         ]
         webdriver = get_driver(is_headless=False)
         loader = cpt.Script(step, interval=3)
         loader.process(webdriver)
-        webdriver.quit()
 
 
 if __name__ == '__main__':
